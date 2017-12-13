@@ -281,29 +281,29 @@
 
     
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}145}]:} \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
-          \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
-          \PY{k+kn}{import} \PY{n+nn}{random}
-          \PY{k+kn}{import} \PY{n+nn}{math}
-          \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
-          
-          \PY{k}{def} \PY{n+nf}{BlackSholes}\PY{p}{(}\PY{n}{drift}\PY{p}{,} \PY{n}{vola}\PY{p}{,} \PY{n}{init}\PY{p}{,} \PY{n}{t}\PY{p}{,} \PY{n}{rand}\PY{p}{)}\PY{p}{:}
-              \PY{n}{S\PYZus{}t} \PY{o}{=} \PY{n}{init} \PY{o}{*} \PY{n}{math}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{p}{(}\PY{n}{drift} \PY{o}{\PYZhy{}} \PY{n}{vola}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{/} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{*} \PY{n}{t} \PY{o}{+} \PY{n}{vola} \PY{o}{*} \PY{n}{math}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{t}\PY{p}{)} \PY{o}{*} \PY{n}{rand} \PY{p}{)}
-              \PY{k}{return} \PY{n}{S\PYZus{}t}
-          
-          \PY{n}{drift} \PY{o}{=} \PY{l+m+mf}{0.3}
-          \PY{n}{vola} \PY{o}{=} \PY{l+m+mf}{0.3}
-          \PY{n}{maturity} \PY{o}{=} \PY{l+m+mi}{1} \PY{c+c1}{\PYZsh{} unit: year}
-          \PY{n}{NumberOfPath} \PY{o}{=} \PY{l+m+mi}{100000}
-          \PY{n}{StockPrice} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{NumberOfPath}\PY{p}{)}
-          \PY{n}{StockPrice}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{100}
-          \PY{n}{delta\PYZus{}t} \PY{o}{=} \PY{n}{maturity} \PY{o}{/} \PY{n}{NumberOfPath}
-          \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{NumberOfPath}\PY{p}{)}\PY{p}{:}
-              \PY{n}{StockPrice}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{BlackSholes}\PY{p}{(}\PY{n}{drift}\PY{p}{,} \PY{n}{vola}\PY{p}{,} \PY{n}{StockPrice}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{delta\PYZus{}t}\PY{p}{,} \PY{n}{random}\PY{o}{.}\PY{n}{gauss}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
-              
-          \PY{c+c1}{\PYZsh{}plt.plot(StockPrice)}
-          \PY{c+c1}{\PYZsh{}Result = sum()}
-          \PY{c+c1}{\PYZsh{}print(StockPrice)}
+{\color{incolor}In [{\color{incolor}11}]:} \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+         \PY{k+kn}{import} \PY{n+nn}{random}
+         \PY{k+kn}{import} \PY{n+nn}{math}
+         \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+         
+         \PY{k}{def} \PY{n+nf}{BlackSholes}\PY{p}{(}\PY{n}{drift}\PY{p}{,} \PY{n}{vola}\PY{p}{,} \PY{n}{init}\PY{p}{,} \PY{n}{t}\PY{p}{,} \PY{n}{rand}\PY{p}{)}\PY{p}{:}
+             \PY{n}{S\PYZus{}t} \PY{o}{=} \PY{n}{init} \PY{o}{*} \PY{n}{math}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{p}{(}\PY{n}{drift} \PY{o}{\PYZhy{}} \PY{n}{vola}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{/} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{*} \PY{n}{t} \PY{o}{+} \PY{n}{vola} \PY{o}{*} \PY{n}{math}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{t}\PY{p}{)} \PY{o}{*} \PY{n}{rand} \PY{p}{)}
+             \PY{k}{return} \PY{n}{S\PYZus{}t}
+         
+         \PY{n}{drift} \PY{o}{=} \PY{l+m+mf}{0.3}
+         \PY{n}{vola} \PY{o}{=} \PY{l+m+mf}{0.3}
+         \PY{n}{maturity} \PY{o}{=} \PY{l+m+mi}{1} \PY{c+c1}{\PYZsh{} unit: year}
+         \PY{n}{NumberOfPath} \PY{o}{=} \PY{l+m+mi}{100000}
+         \PY{n}{StockPrice} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{NumberOfPath}\PY{p}{)}
+         \PY{n}{StockPrice}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{100}
+         \PY{n}{delta\PYZus{}t} \PY{o}{=} \PY{n}{maturity} \PY{o}{/} \PY{n}{NumberOfPath}
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{NumberOfPath}\PY{p}{)}\PY{p}{:}
+             \PY{n}{StockPrice}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{BlackSholes}\PY{p}{(}\PY{n}{drift}\PY{p}{,} \PY{n}{vola}\PY{p}{,} \PY{n}{StockPrice}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{delta\PYZus{}t}\PY{p}{,} \PY{n}{random}\PY{o}{.}\PY{n}{gauss}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{}plt.plot(StockPrice)}
+         \PY{c+c1}{\PYZsh{}Result = sum()}
+         \PY{c+c1}{\PYZsh{}print(StockPrice)}
 \end{Verbatim}
 
 
@@ -313,6 +313,81 @@
 \end{Verbatim}
 
 
+    \section{12/13}\label{section}
+
+\subsection{Progress}\label{progress}
+
+Make GetProcess\_Black - asset is assumed as stock - Inputs are initial
+value(init), drift term(drift), maturity of a transaction (assuming
+option pricing), number of path(num\_of\_path) - Outputs are given by
+the list of stockprice of each grid time. - Grid time are determined by
+the number of path and maturity
+
+Make DrawPath\_Black - This function is used for visializing the result
+of GetProcess\_Black - Input are the same as GetProcess\_Black except
+simulation number(simnum) - Simulation number corresponds to the number
+of path of one process
+
+\subsection{TODO
+クラス化して，stockpricessを保持できるようなクラスを作りたい（ざっくりベース)}\label{todo-ux30afux30e9ux30b9ux5316ux3057ux3066stockpricessux3092ux4fddux6301ux3067ux304dux308bux3088ux3046ux306aux30afux30e9ux30b9ux3092ux4f5cux308aux305fux3044ux3056ux3063ux304fux308aux30d9ux30fcux30b9}
+
+\begin{itemize}
+\tightlist
+\item
+  .get\_process()
+\item
+  .drawpath()
+\item
+  みたいなメソッドを作りたい
+\end{itemize}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}2}]:} \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{import} \PY{n+nn}{random}\PY{o}{,} \PY{n+nn}{math}
+        \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+        
+        \PY{k}{def} \PY{n+nf}{GetProcess\PYZus{}Black}\PY{p}{(}\PY{n}{init}\PY{p}{,} \PY{n}{drift}\PY{p}{,} \PY{n}{volatility}\PY{p}{,} \PY{n}{maturity}\PY{p}{,} \PY{n}{num\PYZus{}of\PYZus{}path}\PY{p}{)}\PY{p}{:}
+            \PY{n}{delta\PYZus{}t} \PY{o}{=} \PY{n}{maturity} \PY{o}{/} \PY{n}{num\PYZus{}of\PYZus{}path}
+            \PY{n}{stockprice} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{num\PYZus{}of\PYZus{}path}\PY{p}{)}
+            \PY{n}{stockprice}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{init}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{num\PYZus{}of\PYZus{}path}\PY{p}{)}\PY{p}{:}
+                \PY{n}{stockprice}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{stockprice}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{*} \PY{n}{math}\PY{o}{.}\PY{n}{exp}\PY{p}{(} \PY{p}{(}\PY{n}{drift} \PY{o}{\PYZhy{}} \PY{p}{(} \PY{n}{volatility} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2} \PY{o}{/} \PY{l+m+mi}{2} \PY{p}{)} \PY{p}{)} \PY{o}{*} 
+                                                           \PY{n}{delta\PYZus{}t} \PY{o}{+} \PY{n}{volatility} \PY{o}{*} \PY{n}{math}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{delta\PYZus{}t}\PY{p}{)} \PY{o}{*} \PY{n}{random}\PY{o}{.}\PY{n}{gauss}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)} \PY{p}{)}
+            \PY{k}{return} \PY{n}{stockprice}
+        
+        \PY{n}{GetProcess\PYZus{}Black}\PY{p}{(}\PY{l+m+mi}{100}\PY{p}{,} \PY{l+m+mf}{0.1}\PY{p}{,} \PY{l+m+mf}{0.5}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{100000}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}plt.plot(GetProcess\PYZus{}Black(100, 0.1, 0.5, 5, 100000))}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}2}]:} array([ 100.        ,  100.08984075,  100.25345136, {\ldots},  235.8469375 ,
+                235.42643021,  234.31372327])
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}48}]:} \PY{k}{def} \PY{n+nf}{DrawPath\PYZus{}Black}\PY{p}{(}\PY{n}{init}\PY{p}{,} \PY{n}{drift}\PY{p}{,} \PY{n}{volatility}\PY{p}{,} \PY{n}{maturity}\PY{p}{,} \PY{n}{num\PYZus{}of\PYZus{}path}\PY{p}{,} \PY{n}{simnum}\PY{p}{)}\PY{p}{:}
+             \PY{c+c1}{\PYZsh{}make list of list. If a dimentsion would be added, the same logic would be applicable.}
+             \PY{n}{StockProcess} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{simnum}\PY{o}{*}\PY{n}{num\PYZus{}of\PYZus{}path}\PY{p}{)}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{n}{simnum}\PY{p}{,}\PY{n}{num\PYZus{}of\PYZus{}path}\PY{p}{)}
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{simnum}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{StockProcess}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{GetProcess\PYZus{}Black}\PY{p}{(}\PY{n}{init}\PY{p}{,} \PY{n}{drift}\PY{p}{,} \PY{n}{volatility}\PY{p}{,} 
+                                                         \PY{n}{maturity}\PY{p}{,} \PY{n}{num\PYZus{}of\PYZus{}path}\PY{p}{)}\PY{p}{)}
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{simnum}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{StockProcess}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}57}]:} \PY{n}{DrawPath\PYZus{}Black}\PY{p}{(}\PY{l+m+mi}{100}\PY{p}{,} \PY{l+m+mf}{0.01}\PY{p}{,} \PY{l+m+mf}{0.1}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{)}
+\end{Verbatim}
+
+
+%    \begin{center}
+%    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{BlackSholes_files/BlackSholes_5_0.png}
+%    \end{center}
+%    { \hspace*{\fill} \\}
+    
 
     % Add a bibliography block to the postdoc
     
