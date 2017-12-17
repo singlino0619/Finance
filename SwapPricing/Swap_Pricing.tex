@@ -20,7 +20,8 @@
 
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
-    \usepackage{graphicx}
+\usepackage[dvipdfmx]{graphicx}    
+%\usepackage{graphicx}
     % We will generate all images so they have a width \maxwidth. This means
     % that they will get their normal width if they fit onto the page, but
     % are scaled down if they would overflow the margins.
@@ -37,7 +38,6 @@
     \usepackage{caption}
     \DeclareCaptionLabelFormat{nolabel}{}
     \captionsetup{labelformat=nolabel}
-
     \usepackage{adjustbox} % Used to constrain images to a maximum size 
     \usepackage{xcolor} % Allow colors to be defined
     \usepackage{enumerate} % Needed for markdown enumerations to work
@@ -65,8 +65,6 @@
     \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
     \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
                                 % normalem makes italics be italics, not underlines
-    
-
     
     
     % Colors for the hyperref package
@@ -297,10 +295,10 @@
 
 The value of the exchange between a floot and a fixed side is given by
 \[
-V = \sum_{i = 1}^{N}  L(t_{i-1}, t_{i}) \times DF(t_{i}) \times \delta_{i} - \sum_{i = 1}^{N} FixedRate \times DF(t_{i})\times \delta_{i},
-\] where \(L(t_{i-1}, t_{i})\) is the Libor rate between \(t_{i-1}\) and
-\(t_{i}\), \(DF(t_{i})\) is a discount factor, \(\delta_{i}\) is a
-day-count-fraction and \(FixedRate\) is a MoneyMarket rate or Swap rate
+V = \sum_{i = 1}^{N}  L(t_{i-1}, t_{i}) \times DF(t_{i}) \times \delta_{i} - \sum_{i = 1}^{N} SwapRate \times DF(t_{i})\times \delta_{i},
+\] where \(L(t_{i-1}, t_{i})\) is the floot interest rate between
+\(t_{i-1}\) and \(t_{i}\), \(DF(t_{i})\) is a discount factor,
+\(\delta_{i}\) is a day-count-fraction and \(SwapRate\) is a Swap rate
 which means a par rate for a swap trade.
 
 \subsubsection{Bootstrap method for getting discount
@@ -308,29 +306,36 @@ factors}\label{bootstrap-method-for-getting-discount-factors}
 
 Discount factors as of today can be estimated from a par swap trade
 which corresponds to \(V = 0\) under swap pricing formula. For example,
-let us consider a O/N swap trade. The discount factor of O/N
-\(DF(t_{O/N})\) is calculated by \[
-DF(t_{O/N}) = \frac{ DF(t_{0}) } { 1 - FixedRate(O/N) },
+let us consider a swap trade with maturity of 1.5 year. The discount
+factor for 1.5 year \(DF(t_{1.5Y})\) is calculated by solveing the
+following equation: \[
+\sum_{i = 1}^{3}  L(t_{i-1}, t_{i}) \times DF(t_{i}) \times \delta = \sum_{i = 1}^{3} SwapRate(1.5Y) \times DF(t_{i})\times \delta
 \]
 
-where a quoted Overnight Rate is used for \(FixedRate(O/N)\) and
-\(DF(t_{0}) = 1\). Continuously, let us consider a T/N swap trade. When
-\(V = 0\) under the swap pricing formula, it is written by \[
-FixedRate(T/N)\ ( DF(t_{O/N}) \times \delta_{1} + DF(t_{T/N}) \times \delta_{2} ) \\
- = ( DF(t_{O/N}) - DF(t_{0}) ) \delta_{1} + (DF(t_{T/N}) - DF(t_{O/N})) \delta_{2},
-\]
-
-where \(\delta_2\) is a day-count-fraction between \(t_{O/N}\) and
-\(t_{T/N}\) and a quoted Tomorrow-Next Rate is used for
-\(FixedRate(T/N)\). This equation can be solved for \(DF(t_{T/N})\) by
-using \(DF(t_{O/N})\) which is derived from the above equation. In this
-way, discount factors at each tenor is calculated. This method for
-getiing discount factors is called as Bootstrap method. The expression
-of \(DF(t_{T/N})\) is given by
-
+where a quoted swap rate is used for \(SwapRate(1.5Y)\), the
+day-count-fraction \(\delta\) is asuumed 6 month and the floot side
+interest rate is assumed that a following model expressed as \[
+L(t_{i-1}, t_{i}) = \frac{1}{\delta} \Big( \frac{ DF(t_{i-1}) }{ DF(t_{i}) } - 1 \Big).
+\] The above equation can be solved by using \(DF(t_{0.5Y})\),
+\(DF(t_{1.0Y})\) and the floot interest rate which is defined as above
+equation. As a result, the discount factor \(DF(t_{1.5Y})\) is given by
 \[
-DF(t_{T/N}) = \frac{ FixedRate(T/N)\times DF(t_{O/N}) + DF(t_0) }{ 1 - FixedRate(T/N) }
+DF(t_{1.5Y}) = \frac{1}{(1 + \delta \times SwapRate(1.5Y))} \Big( DF(t_{0}) - SwapRate(1.5Y) \times \delta \times \big(DF(t_{0.5Y}) + DF(t_{1.0Y}) \big) \Big),
 \]
+
+where \(DF(t_{0.5Y})\) and \(DF(t_{1.0Y})\) is calculated by using a
+quoted LIBOR (the rate of Money Market). The short rate of Money Market
+means spot rate, where the cashflows is expressed as only two terms. For
+example, \(DF(t_{0.5Y})\) is given by \[
+DF(t_{0.5Y}) = \frac{1}{( 1 + \delta \times L(0.0Y, 0.5Y))},
+\]
+
+where \(L(0.0Y, 0.5Y)\) is the LIBOR rate between today and 6 month
+later. Discount factors after \(t_{1.5Y}\) can be calculated by the same
+way as the derivation of \(DF(t_{1.5Y})\). This method of getting
+discount factors gradually is called Bootstrap method.
+
+\href{Continuously,\%20let\%20us\%20consider\%20a\%20T/N\%20swap\%20trade.\%20When\%20$V\%20=\%200$\%20under\%20the\%20swap\%20pricing\%20formula,\%20it\%20is\%20written\%20by\%20$$\%20FixedRate(T/N)\%20(\%20DF(t_\%7BO/N\%7D)\%20/times\%20/delta_\%7B1\%7D\%20+\%20DF(t_\%7BT/N\%7D)\%20/times\%20/delta_\%7B2\%7D\%20)\%20/\%20=\%20(\%20DF(t_\%7BO/N\%7D)\%20-\%20DF(t_\%7B0\%7D)\%20)\%20/delta_\%7B1\%7D\%20+\%20(DF(t_\%7BT/N\%7D)\%20-\%20DF(t_\%7BO/N\%7D))\%20/delta_\%7B2\%7D,\%20$$\%20where\%20$/delta_2$\%20is\%20a\%20day-count-fraction\%20between\%20$t_\%7BO/N\%7D$\%20and\%20$t_\%7BT/N\%7D$\%20and\%20a\%20quoted\%20Tomorrow-Next\%20Rate\%20is\%20used\%20for\%20$FixedRate(T/N)$.\%20This\%20equation\%20can\%20be\%20solved\%20for\%20$DF(t_\%7BT/N\%7D)$\%20by\%20using\%20$DF(t_\%7BO/N\%7D)$\%20which\%20is\%20derived\%20from\%20the\%20above\%20equation.\%20In\%20this\%20way,\%20discount\%20factors\%20at\%20each\%20tenor\%20is\%20calculated.\%20This\%20method\%20for\%20getiing\%20discount\%20factors\%20is\%20called\%20as\%20Bootstrap\%20method.\%20The\%20expression\%20of\%20$DF(t_\%7BT/N\%7D)$\%20is\%20given\%20by\%20$$\%20DF(t_\%7BT/N\%7D)\%20=\%20/frac\%7B\%20FixedRate(T/N)/times\%20DF(t_\%7BO/N\%7D)\%20+\%20DF(t_0)\%20\%7D\%7B\%201\%20-\%20FixedRate(T/N)\%20\%7D\%20$$}{}
 
 
     % Add a bibliography block to the postdoc
