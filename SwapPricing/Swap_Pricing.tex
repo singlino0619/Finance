@@ -20,8 +20,7 @@
 
     % Basic figure setup, for now with no caption control since it's done
     % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
-\usepackage[dvipdfmx]{graphicx}    
-%\usepackage{graphicx}
+    \usepackage{graphicx}
     % We will generate all images so they have a width \maxwidth. This means
     % that they will get their normal width if they fit onto the page, but
     % are scaled down if they would overflow the margins.
@@ -38,6 +37,7 @@
     \usepackage{caption}
     \DeclareCaptionLabelFormat{nolabel}{}
     \captionsetup{labelformat=nolabel}
+
     \usepackage{adjustbox} % Used to constrain images to a maximum size 
     \usepackage{xcolor} % Allow colors to be defined
     \usepackage{enumerate} % Needed for markdown enumerations to work
@@ -65,6 +65,8 @@
     \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
     \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
                                 % normalem makes italics be italics, not underlines
+    
+
     
     
     % Colors for the hyperref package
@@ -337,6 +339,52 @@ discount factors gradually is called Bootstrap method.
 
 \href{Continuously,\%20let\%20us\%20consider\%20a\%20T/N\%20swap\%20trade.\%20When\%20$V\%20=\%200$\%20under\%20the\%20swap\%20pricing\%20formula,\%20it\%20is\%20written\%20by\%20$$\%20FixedRate(T/N)\%20(\%20DF(t_\%7BO/N\%7D)\%20/times\%20/delta_\%7B1\%7D\%20+\%20DF(t_\%7BT/N\%7D)\%20/times\%20/delta_\%7B2\%7D\%20)\%20/\%20=\%20(\%20DF(t_\%7BO/N\%7D)\%20-\%20DF(t_\%7B0\%7D)\%20)\%20/delta_\%7B1\%7D\%20+\%20(DF(t_\%7BT/N\%7D)\%20-\%20DF(t_\%7BO/N\%7D))\%20/delta_\%7B2\%7D,\%20$$\%20where\%20$/delta_2$\%20is\%20a\%20day-count-fraction\%20between\%20$t_\%7BO/N\%7D$\%20and\%20$t_\%7BT/N\%7D$\%20and\%20a\%20quoted\%20Tomorrow-Next\%20Rate\%20is\%20used\%20for\%20$FixedRate(T/N)$.\%20This\%20equation\%20can\%20be\%20solved\%20for\%20$DF(t_\%7BT/N\%7D)$\%20by\%20using\%20$DF(t_\%7BO/N\%7D)$\%20which\%20is\%20derived\%20from\%20the\%20above\%20equation.\%20In\%20this\%20way,\%20discount\%20factors\%20at\%20each\%20tenor\%20is\%20calculated.\%20This\%20method\%20for\%20getiing\%20discount\%20factors\%20is\%20called\%20as\%20Bootstrap\%20method.\%20The\%20expression\%20of\%20$DF(t_\%7BT/N\%7D)$\%20is\%20given\%20by\%20$$\%20DF(t_\%7BT/N\%7D)\%20=\%20/frac\%7B\%20FixedRate(T/N)/times\%20DF(t_\%7BO/N\%7D)\%20+\%20DF(t_0)\%20\%7D\%7B\%201\%20-\%20FixedRate(T/N)\%20\%7D\%20$$}{}
 
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}11}]:} \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+         \PY{k+kn}{import} \PY{n+nn}{datetime}
+         
+         \PY{k}{class} \PY{n+nc}{getDF\PYZus{}moneymarket}\PY{p}{:}
+             \PY{k}{def} \PY{n+nf}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{libor\PYZus{}rate}\PY{p}{,} \PY{n}{start\PYZus{}day}\PY{p}{,} \PY{n}{end\PYZus{}day}\PY{p}{)}\PY{p}{:}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{libor\PYZus{}rate} \PY{o}{=} \PY{n}{libor\PYZus{}rate}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{start\PYZus{}day} \PY{o}{=} \PY{n}{start\PYZus{}day}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{end\PYZus{}day} \PY{o}{=} \PY{n}{end\PYZus{}day}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{datetime\PYZus{}obj\PYZus{}start} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{end\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{daycount} \PY{o}{=} \PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{datetime\PYZus{}obj\PYZus{}start}\PY{p}{)}\PY{o}{.}\PY{n}{days} \PY{o}{/} \PY{l+m+mi}{360}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{discount\PYZus{}factor} \PY{o}{=} \PY{l+m+mi}{0}
+             
+             \PY{k}{def} \PY{n+nf}{getDF}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{discount\PYZus{}factor} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1} \PY{o}{/} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{+} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{daycount} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{libor\PYZus{}rate}\PY{p}{)}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{end\PYZus{}day}\PY{p}{]}
+                 \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{discount\PYZus{}factor}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{DF} \PY{o}{=} \PY{n}{getDF\PYZus{}moneymarket}\PY{p}{(}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2017/12/18}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2019/12/30}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{DF}\PY{o}{.}\PY{n}{discount\PYZus{}factor}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{DF}\PY{o}{.}\PY{n}{getDF}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{DF}\PY{o}{.}\PY{n}{discount\PYZus{}factor}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+0
+[0.7081038552321007, '2017/12/18', '2019/12/30']
+[0.7081038552321007, '2017/12/18', '2019/12/30']
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{DF1} \PY{o}{=} \PY{n}{getDF\PYZus{}moneymarket}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2017/12/18}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2018/3/20}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{DF1}\PY{o}{.}\PY{n}{getDF}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}3}]:} 0.9287925696594427
+\end{Verbatim}
+            
 
     % Add a bibliography block to the postdoc
     

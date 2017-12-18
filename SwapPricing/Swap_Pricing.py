@@ -53,3 +53,41 @@
 # DF(t_{T/N}) = \frac{ FixedRate(T/N)\times DF(t_{O/N}) + DF(t_0) }{ 1 - FixedRate(T/N) } 
 # $$
 # )
+
+# In[11]:
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import datetime
+
+class getDF_moneymarket:
+    def __init__(self, libor_rate, start_day, end_day):
+        self.libor_rate = libor_rate
+        self.start_day = start_day
+        self.end_day = end_day
+        self.datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
+        self.datetime_obj_end = datetime.datetime.strptime(end_day, '%Y/%m/%d')
+        self.daycount = (self.datetime_obj_end - self.datetime_obj_start).days / 360
+        self.discount_factor = 0
+    
+    def getDF(self):
+        self.discount_factor = [1 / (1 + self.daycount * self.libor_rate), self.start_day, self.end_day]
+        return self.discount_factor
+
+
+# In[12]:
+
+
+DF = getDF_moneymarket(0.2, '2017/12/18', '2019/12/30')
+print(DF.discount_factor)
+print(DF.getDF())
+print(DF.discount_factor)
+
+
+# In[3]:
+
+
+DF1 = getDF_moneymarket(0.3, '2017/12/18', '2018/3/20')
+DF1.getDF()
+
