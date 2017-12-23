@@ -94,11 +94,16 @@ DF1 = getDF_moneymarket(0.3, '2017/12/18', '2018/3/20')
 DF1.getDF()
 
 
-# In[76]:
+# In[66]:
 
 
+get_ipython().magic('matplotlib inline')
 import numpy as np
 import csv
+import time
+import datetime
+import matplotlib.pyplot as plt
+
 with open('sample_moneymarket.csv', 'r') as csvfile:
     reader_obj = csv.reader(csvfile)
     # rewritten header_obj by using next method(???)
@@ -109,19 +114,47 @@ with open('sample_moneymarket.csv', 'r') as csvfile:
         
 mm_list
 
+
+
+
 def get_DF(money_market_list):
     list_len = len(money_market_list)
     discount_factor = np.zeros(list_len*2).reshape(list_len, 2)
-#    discount_factor = [[] for i in range(list_len)]
-#    for i in range(0,list_len):
- #       discount_factor[i][0] = str(discount_factor[i][0])
-#    for i in range(0, list_len):
- #       discount_factor[i][0] = money_market_list[i][0]
-#    moji = str(discount_factor[0][0])
+    discount_factor = [["",0.0] for i in range(list_len)]
+    day_count_fraction = np.zeros(list_len)
+    # substitution the kinf of trade
+    for i in range(0,list_len):
+             discount_factor[i][0] = money_market_list[i][0]
+    # calc daycount-fraction
+    convention = 360.0
+    for i in range(0, len(day_count_fraction)):
+        day_count_fraction[i] = calc_daycount(money_market_list[i][1], money_market_list[i][2], convention)
+    # calculate DF of O/N
+    discount_factor[0][1] = 1.0 / (1.0 + day_count_fraction[0] * float(money_market_list[0][3]))
+    # calculate DF of  T/N
+    discount_factor[1][1] = discount_factor[0][1] /(1.0 + day_count_fraction[1]*float(money_market_list[1][3]))
+    # calculate DF after 1W
+    for i in range(2, list_len):
+        discount_factor[i][1] = discount_factor[1][1] / (1.0 + day_count_fraction[i] * float(money_market_list[i][3]))
     return discount_factor
-#    return moji
+                                   
+def calc_daycount(start_day, end_day, convention):
+    datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
+    datetime_obj_end = datetime.datetime.strptime(end_day, '%Y/%m/%d')
+    daycount = (datetime_obj_end - datetime_obj_start).days / convention
+    return daycount
 
-get_DF(mm_list)[0][0]
+def draw_DF(seq_discount_factor):
+        list_len = len(seq_discount_factor)
+        seq_DF = np.zeros(list_len)
+        for i in range(0, list_len):
+            seq_DF[i] = seq_discount_factor[i][1]
+        plt.plot(seq_DF)
+        plt.ylim([0,1.0])
+        
+                                   
+list_discountfactor = get_DF(mm_list)
+draw_DF(list_discountfactor)
 
 
 # In[43]:
@@ -129,3 +162,38 @@ get_DF(mm_list)[0][0]
 
 [[] for i in range(5)]
 
+
+# In[55]:
+
+
+calc_daycount(mm_list[0][1], mm_list[0][2], 360)
+calc_daycount(mm_list[5][1], mm_list[5][2], 360)
+
+
+# In[56]:
+
+
+float(mm_list[0][3])
+
+
+# ### エラーメッセージ
+# 
+# ---
+# TypeError                                 Traceback (most recent call last)
+# <ipython-input-29-8d376080b34d> in <module>()
+#      33     return daycount
+#      34 
+# ---> 35 get_DF(mm_list)
+# 
+# <ipython-input-29-8d376080b34d> in get_DF(money_market_list)
+#      24     convention = 360.0
+#      25     day_count_fraction[0] = calc_daycount(money_market_list[0][1], money_market_list[0][2], convention)
+# ---> 26     discount_factor[0][1] = 1.0 / (1.0 + day_count_fraction[0] * money_market_list[0][3])
+#      27     return discount_factor
+#      28 
+# 
+# TypeError: 'numpy.float64' object cannot be interpreted as an integer
+# 
+# ---
+# ### 解決策
+# - 数値と文字列が混ざっているのでどちらかに統一すべし
