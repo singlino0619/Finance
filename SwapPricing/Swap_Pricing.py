@@ -62,7 +62,7 @@ import numpy as np
 import datetime
 
 class getDF_moneymarket:
-    def __init__(self, libor_rate, start_day, end_day):
+'''    def __init__(self, libor_rate, start_day, end_day):
         self.libor_rate = libor_rate
         self.start_day = start_day
         self.end_day = end_day
@@ -70,10 +70,12 @@ class getDF_moneymarket:
         self.datetime_obj_end = datetime.datetime.strptime(end_day, '%Y/%m/%d')
         self.daycount = (self.datetime_obj_end - self.datetime_obj_start).days / 360
         self.discount_factor = 0
-    
-    def getDF(self):
-        self.discount_factor = [1 / (1 + self.daycount * self.libor_rate), self.start_day, self.end_day]
-        return self.discount_factor
+'''
+    def __init__(self, today, array_ccy):
+            self._start_day = today
+
+    def getDF(self, seq_moneymarket):
+        
 
 
 # In[12]:
@@ -90,4 +92,40 @@ print(DF.discount_factor)
 
 DF1 = getDF_moneymarket(0.3, '2017/12/18', '2018/3/20')
 DF1.getDF()
+
+
+# In[76]:
+
+
+import numpy as np
+import csv
+with open('sample_moneymarket.csv', 'r') as csvfile:
+    reader_obj = csv.reader(csvfile)
+    # rewritten header_obj by using next method(???)
+    header_obj = next(reader_obj)
+    mm_list = []
+    for row in reader_obj:
+        mm_list.append(row)
+        
+mm_list
+
+def get_DF(money_market_list):
+    list_len = len(money_market_list)
+    discount_factor = np.zeros(list_len*2).reshape(list_len, 2)
+#    discount_factor = [[] for i in range(list_len)]
+#    for i in range(0,list_len):
+ #       discount_factor[i][0] = str(discount_factor[i][0])
+#    for i in range(0, list_len):
+ #       discount_factor[i][0] = money_market_list[i][0]
+#    moji = str(discount_factor[0][0])
+    return discount_factor
+#    return moji
+
+get_DF(mm_list)[0][0]
+
+
+# In[43]:
+
+
+[[] for i in range(5)]
 
