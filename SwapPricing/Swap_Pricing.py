@@ -54,7 +54,7 @@
 # $$
 # )
 
-# In[11]:
+# In[3]:
 
 
 import matplotlib.pyplot as plt
@@ -78,7 +78,7 @@ class getDF_moneymarket:
         
 
 
-# In[12]:
+# In[4]:
 
 
 DF = getDF_moneymarket(0.2, '2017/12/18', '2019/12/30')
@@ -87,14 +87,14 @@ print(DF.getDF())
 print(DF.discount_factor)
 
 
-# In[3]:
+# In[5]:
 
 
 DF1 = getDF_moneymarket(0.3, '2017/12/18', '2018/3/20')
 DF1.getDF()
 
 
-# In[66]:
+# In[9]:
 
 
 get_ipython().magic('matplotlib inline')
@@ -117,7 +117,7 @@ mm_list
 
 
 
-def get_DF(money_market_list):
+def get_DF_MM(money_market_list):
     list_len = len(money_market_list)
     discount_factor = np.zeros(list_len*2).reshape(list_len, 2)
     discount_factor = [["",0.0] for i in range(list_len)]
@@ -151,29 +151,119 @@ def draw_DF(seq_discount_factor):
             seq_DF[i] = seq_discount_factor[i][1]
         plt.plot(seq_DF)
         plt.ylim([0,1.0])
-        
+
+def get_DF_SW(money_market_list, swap_rate_list):
+    DF_moneymarket = get_DF_MM(money_market_list)
+
+
+    
                                    
 list_discountfactor = get_DF(mm_list)
-draw_DF(list_discountfactor)
+list_discountfactor
+# draw_DF(list_discountfactor)
 
 
-# In[43]:
+# In[82]:
 
 
-[[] for i in range(5)]
+with open('sample_moneymarket.csv', 'r') as csvfile:
+    reader_obj = csv.reader(csvfile)
+    # rewritten header_obj by using next method(???)
+    header_obj = next(reader_obj)
+    mm_list = []
+    for row in reader_obj:
+        mm_list.append(row)
+       
+mm_list
 
 
-# In[55]:
+# # 1/15
+# - データの加工
+#     - 小数点表記 ("{:.1f}".format())
+#     - 文字列の結合　（+でできる）
+# - 空のリスト作成
+#     - 内包表記 -> [5 for i in range(10)] -> 5が１０個のリスト
+
+# In[256]:
+
+
+with open('sample_swaprate.csv', 'r') as csvfile:
+    reader_obj = csv.reader(csvfile)
+    # rewritten header_obj by using next method(???)
+    header_obj = next(reader_obj)
+    swap_rate_list = []
+    for row in reader_obj:
+        swap_rate_list.append(row)
+    temp_num = [[] for i in range(len(swap_rate_list))] # comprehension expression for making null list.
+    ### proceccing the expression for the type of 1Y to 1.0Y.
+    for i in range(len(swap_rate_list)):
+        if (len(swap_rate_list[i][0]) == 2):
+            temp_num[i] = "{:.1f}".format(int(swap_rate_list[i][0][0])) + swap_rate_list[i][0][1]
+            swap_rate_list[i][0] = temp_num[i]
+        elif (len(swap_rate_list[i][0]) == 3):
+            temp_num[i] = "{:.1f}".format(int(swap_rate_list[i][0][0:2])) + swap_rate_list[i][0][2]
+            swap_rate_list[i][0] = temp_num[i]
+        else:
+            break
+
+swap_rate_list
+
+
+# In[220]:
+
+
+"{:.1f}".format(132)
+
+
+# In[90]:
+
+
+[[1] for i in range(4)]
+
+
+# In[6]:
 
 
 calc_daycount(mm_list[0][1], mm_list[0][2], 360)
 calc_daycount(mm_list[5][1], mm_list[5][2], 360)
 
 
-# In[56]:
+# In[8]:
 
 
 float(mm_list[0][3])
+
+
+# # 1/15
+# - エクセルのVlookup風の作業
+#     - 半年置きのテナーで，空のswap rateのリストを作成
+#     - 外部データとして存在する，加工済みの（1Y->1.0Y）データとマッチする行はそのまま置き換え
+#     - マッチしない行は据え置きでデフォルトの0を代入したままのリストを作成
+
+# In[276]:
+
+
+def get_DF_SW(money_market_list, swap_rate_list, tenor):
+    seq_len_of_swap_rate = int(30/tenor - 1)
+    array_swap_rate = [["", 0, 0, 0] for i in range(seq_len_of_swap_rate )]
+    for i in range(2,seq_len_of_swap_rate +2):
+        array_swap_rate[i-2][0] = "{}Y".format(i*0.5)
+    ## for sentence is nested...
+    ## I wanna reviese code, but I have not an idea. Please tell me better coding if you have.
+    for i in range(len(array_swap_rate)):
+        for j in range(len(swap_rate_list)):
+            if (array_swap_rate[i][0] in swap_rate_list[j][0]):
+                array_swap_rate[i] = swap_rate_list[j]
+                break
+                
+    print(array_swap_rate)
+    return array_swap_rate
+
+
+# In[277]:
+
+
+get_DF_SW(mm_list, swap_rate_list, 1/2)
 
 
 # ### エラーメッセージ
