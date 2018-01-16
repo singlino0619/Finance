@@ -54,7 +54,7 @@
 # $$
 # )
 
-# In[3]:
+# In[2]:
 
 
 import matplotlib.pyplot as plt
@@ -78,7 +78,7 @@ class getDF_moneymarket:
         
 
 
-# In[4]:
+# In[3]:
 
 
 DF = getDF_moneymarket(0.2, '2017/12/18', '2019/12/30')
@@ -87,14 +87,14 @@ print(DF.getDF())
 print(DF.discount_factor)
 
 
-# In[5]:
+# In[4]:
 
 
 DF1 = getDF_moneymarket(0.3, '2017/12/18', '2018/3/20')
 DF1.getDF()
 
 
-# In[9]:
+# In[5]:
 
 
 get_ipython().magic('matplotlib inline')
@@ -163,7 +163,7 @@ list_discountfactor
 # draw_DF(list_discountfactor)
 
 
-# In[82]:
+# In[6]:
 
 
 with open('sample_moneymarket.csv', 'r') as csvfile:
@@ -184,7 +184,7 @@ mm_list
 # - 空のリスト作成
 #     - 内包表記 -> [5 for i in range(10)] -> 5が１０個のリスト
 
-# In[256]:
+# In[7]:
 
 
 with open('sample_swaprate.csv', 'r') as csvfile:
@@ -209,26 +209,26 @@ with open('sample_swaprate.csv', 'r') as csvfile:
 swap_rate_list
 
 
-# In[220]:
+# In[8]:
 
 
 "{:.1f}".format(132)
 
 
-# In[90]:
+# In[9]:
 
 
 [[1] for i in range(4)]
 
 
-# In[6]:
+# In[10]:
 
 
 calc_daycount(mm_list[0][1], mm_list[0][2], 360)
 calc_daycount(mm_list[5][1], mm_list[5][2], 360)
 
 
-# In[8]:
+# In[11]:
 
 
 float(mm_list[0][3])
@@ -239,9 +239,19 @@ float(mm_list[0][3])
 #     - 半年置きのテナーで，空のswap rateのリストを作成
 #     - 外部データとして存在する，加工済みの（1Y->1.0Y）データとマッチする行はそのまま置き換え
 #     - マッチしない行は据え置きでデフォルトの0を代入したままのリストを作成
+#     
+# # 1/16
+# - get_end_day()関数の作成
+#     - 祝日，　土日勘案はせず．(ってかどうやるの？)
 
-# In[276]:
+# In[75]:
 
+
+def get_end_day(maturity, start_day):
+    datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
+    effective_days = float(maturity[0:len(maturity)-1])*365
+    end_day = datetime_obj_start + datetime.timedelta(days=effective_days)
+    return end_day.strftime('%Y/%m/%d')
 
 def get_DF_SW(money_market_list, swap_rate_list, tenor):
     seq_len_of_swap_rate = int(30/tenor - 1)
@@ -251,19 +261,90 @@ def get_DF_SW(money_market_list, swap_rate_list, tenor):
     ## for sentence is nested...
     ## I wanna reviese code, but I have not an idea. Please tell me better coding if you have.
     for i in range(len(array_swap_rate)):
+        array_swap_rate[i][1] = swap_rate_list[0][1]
+        array_swap_rate[i][2] = get_end_day(array_swap_rate[i][0], array_swap_rate[i][1])
         for j in range(len(swap_rate_list)):
             if (array_swap_rate[i][0] in swap_rate_list[j][0]):
                 array_swap_rate[i] = swap_rate_list[j]
                 break
                 
-    print(array_swap_rate)
     return array_swap_rate
 
 
-# In[277]:
+# In[76]:
 
 
 get_DF_SW(mm_list, swap_rate_list, 1/2)
+
+
+# In[74]:
+
+
+def get_end_day(maturity, start_day):
+    datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
+    effective_days = float(maturity[0:len(maturity)-1])*365
+    end_day = datetime_obj_start + datetime.timedelta(days=effective_days)
+    return end_day.strftime('%Y/%m/%d')
+
+
+# In[48]:
+
+
+import datetime
+now = datetime.datetime.today()
+d = now + datetime.timedelta(days=10)
+d.strftime('%Y/%m/%d')
+
+
+# In[63]:
+
+
+get_end_day('2017/12/25', '1.5Y')
+
+
+# In[108]:
+
+
+import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
+x = np.linspace(0, 10, num=11, endpoint=True)
+y = np.cos(-x**2/9.0)
+f = interp1d(x, y)
+xnew = np.linspace(0, 10, num=41, endpoint=True)
+plt.plot(x, y, 'o', xnew, f(xnew), '-')
+
+
+# In[ ]:
+
+
+x = np.array([0,1,2,3,4,5,6,7,8,9,10])
+y = np.array([20,20,15,14,1,4,2,6,1,1,1])
+f = interp1d(x,y)
+
+
+# In[134]:
+
+
+x = []
+y = []
+for i in range(len(swap_rate_list)):
+    x.append(float(swap_rate_list[i][0][0:len(swap_rate_list[i][0])-1]))
+    y.append(float(swap_rate_list[i][3]))
+print(x)
+print(y)
+f = interp1d(x,y)
+xnew = np.linspace(1, 30, num=30, endpoint=True)
+plt.plot(xnew, f(xnew), '-')
+f(2.1)
+
+
+# In[116]:
+
+
+a = []
+a.append([1,2])
+a.append([2,3])
+a
 
 
 # ### エラーメッセージ

@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.14159265-p3.7-160201-2.6 (utf8.euc) (TeX Live 2016) (preloaded format=platex 2017.5.14)  16 JAN 2018 00:06
+This is e-pTeX, Version 3.14159265-p3.7-160201-2.6 (utf8.euc) (TeX Live 2016) (preloaded format=platex 2017.5.14)  16 JAN 2018 23:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -790,35 +790,41 @@ LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 348
 (/usr/local/texlive/2016/texmf-dist/tex/latex/base/ts1cmtt.fd
 File: ts1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 ) [2] [3] [4]
-[5] [6] [7]
+[5] [6] [7] [8] [9]
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 744.
+(hyperref)                than one, level fixed on input line 860.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 759.
-[8]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 759.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 875.
+[10]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 875.
  (./Swap_Pricing.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 759.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 759.
-Package rerunfilecheck Info: File `Swap_Pricing.out' has not changed.
-(rerunfilecheck)             Checksum: 5F759646BC204432BCDE5BDCDA10CBEF;530.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 875.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 875.
 
+
+Package rerunfilecheck Warning: File `Swap_Pricing.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `Swap_Pricing.out':
+(rerunfilecheck)             Before: B8F7C58D9D58C6D96BAC6B4FA9395003;418
+(rerunfilecheck)             After:  4CE287A59D64BFE788D4AD910F5AA355;569.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 759.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 875.
  ) 
 Here is how much of TeX's memory you used:
  10502 strings out of 493683
- 158294 string characters out of 6149653
- 274163 words of memory out of 5000000
+ 158274 string characters out of 6149653
+ 271163 words of memory out of 5000000
  13865 multiletter control sequences out of 15000+600000
  32573 words of font info for 98 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 36i,6n,38p,1590b,509s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 36i,6n,38p,1324b,509s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on Swap_Pricing.dvi (8 pages, 47264 bytes).
+Output written on Swap_Pricing.dvi (10 pages, 60160 bytes).
