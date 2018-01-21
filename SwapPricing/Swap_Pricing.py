@@ -52,17 +52,17 @@
 # $$
 # DF(t_{T/N}) = \frac{ FixedRate(T/N)\times DF(t_{O/N}) + DF(t_0) }{ 1 - FixedRate(T/N) } 
 # $$
-# )
+# '')
 
-# In[2]:
+# In[1]:
 
 
-import matplotlib.pyplot as plt
+''' import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 
 class getDF_moneymarket:
-'''    def __init__(self, libor_rate, start_day, end_day):
+   def __init__(self, libor_rate, start_day, end_day):
         self.libor_rate = libor_rate
         self.start_day = start_day
         self.end_day = end_day
@@ -70,31 +70,37 @@ class getDF_moneymarket:
         self.datetime_obj_end = datetime.datetime.strptime(end_day, '%Y/%m/%d')
         self.daycount = (self.datetime_obj_end - self.datetime_obj_start).days / 360
         self.discount_factor = 0
-'''
+        
     def __init__(self, today, array_ccy):
             self._start_day = today
 
     def getDF(self, seq_moneymarket):
-        
+'''        
 
 
-# In[3]:
+# In[175]:
 
 
-DF = getDF_moneymarket(0.2, '2017/12/18', '2019/12/30')
+'''DF = getDF_moneymarket(0.2, '2017/12/18', '2019/12/30')
 print(DF.discount_factor)
 print(DF.getDF())
 print(DF.discount_factor)
+'''
 
 
-# In[4]:
+# In[174]:
 
 
-DF1 = getDF_moneymarket(0.3, '2017/12/18', '2018/3/20')
+'''DF1 = getDF_moneymarket(0.3, '2017/12/18', '2018/3/20')
 DF1.getDF()
+'''
 
 
-# In[5]:
+# # 1/20
+# - money marketのDFのリストの形式を変更
+#     - [tenor, DF]　から [tenor, start, end, labor_rate, DF]の形式に変更
+
+# In[18]:
 
 
 get_ipython().magic('matplotlib inline')
@@ -111,32 +117,31 @@ with open('sample_moneymarket.csv', 'r') as csvfile:
     mm_list = []
     for row in reader_obj:
         mm_list.append(row)
-        
-mm_list
-
-
-
 
 def get_DF_MM(money_market_list):
     list_len = len(money_market_list)
-    discount_factor = np.zeros(list_len*2).reshape(list_len, 2)
-    discount_factor = [["",0.0] for i in range(list_len)]
+#    discount_factor = np.zeros(list_len*2).reshape(list_len, 2)
+    discount_factor_list = [["", "", "", 0.0,0.0] for i in range(list_len)]
+#    discount_factor = [["", 0.0] for i in range(list_len)]
     day_count_fraction = np.zeros(list_len)
     # substitution the kinf of trade
-    for i in range(0,list_len):
-             discount_factor[i][0] = money_market_list[i][0]
+    for i in range(0, list_len):
+        discount_factor_list[i][0] = money_market_list[i][0]
+        discount_factor_list[i][1] = money_market_list[i][1]
+        discount_factor_list[i][2] = money_market_list[i][2]
+        discount_factor_list[i][3] = float(money_market_list[i][3])
     # calc daycount-fraction
     convention = 360.0
     for i in range(0, len(day_count_fraction)):
         day_count_fraction[i] = calc_daycount(money_market_list[i][1], money_market_list[i][2], convention)
     # calculate DF of O/N
-    discount_factor[0][1] = 1.0 / (1.0 + day_count_fraction[0] * float(money_market_list[0][3]))
+    discount_factor_list[0][4] = 1.0 / (1.0 + day_count_fraction[0] * float(discount_factor_list[0][3]))
     # calculate DF of  T/N
-    discount_factor[1][1] = discount_factor[0][1] /(1.0 + day_count_fraction[1]*float(money_market_list[1][3]))
+    discount_factor_list[1][4] = discount_factor_list[0][4] /(1.0 + day_count_fraction[1]*float(discount_factor_list[1][3]))
     # calculate DF after 1W
     for i in range(2, list_len):
-        discount_factor[i][1] = discount_factor[1][1] / (1.0 + day_count_fraction[i] * float(money_market_list[i][3]))
-    return discount_factor
+        discount_factor_list[i][4] = discount_factor_list[1][4] / (1.0 + day_count_fraction[i] * float(discount_factor_list[i][3]))
+    return discount_factor_list
                                    
 def calc_daycount(start_day, end_day, convention):
     datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
@@ -144,6 +149,11 @@ def calc_daycount(start_day, end_day, convention):
     daycount = (datetime_obj_end - datetime_obj_start).days / convention
     return daycount
 
+def calc_days(start_day, end_day):
+    datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
+    datetime_obj_end = datetime.datetime.strptime(end_day, '%Y/%m/%d')
+    return (datetime_obj_end - datetime_obj_start).days
+    
 def draw_DF(seq_discount_factor):
         list_len = len(seq_discount_factor)
         seq_DF = np.zeros(list_len)
@@ -152,18 +162,13 @@ def draw_DF(seq_discount_factor):
         plt.plot(seq_DF)
         plt.ylim([0,1.0])
 
-def get_DF_SW(money_market_list, swap_rate_list):
-    DF_moneymarket = get_DF_MM(money_market_list)
 
-
-    
-                                   
-list_discountfactor = get_DF(mm_list)
+list_discountfactor = get_DF_MM(mm_list)
 list_discountfactor
 # draw_DF(list_discountfactor)
 
 
-# In[6]:
+# In[2]:
 
 
 with open('sample_moneymarket.csv', 'r') as csvfile:
@@ -173,7 +178,7 @@ with open('sample_moneymarket.csv', 'r') as csvfile:
     mm_list = []
     for row in reader_obj:
         mm_list.append(row)
-       
+
 mm_list
 
 
@@ -184,7 +189,7 @@ mm_list
 # - 空のリスト作成
 #     - 内包表記 -> [5 for i in range(10)] -> 5が１０個のリスト
 
-# In[7]:
+# In[3]:
 
 
 with open('sample_swaprate.csv', 'r') as csvfile:
@@ -209,31 +214,6 @@ with open('sample_swaprate.csv', 'r') as csvfile:
 swap_rate_list
 
 
-# In[8]:
-
-
-"{:.1f}".format(132)
-
-
-# In[9]:
-
-
-[[1] for i in range(4)]
-
-
-# In[10]:
-
-
-calc_daycount(mm_list[0][1], mm_list[0][2], 360)
-calc_daycount(mm_list[5][1], mm_list[5][2], 360)
-
-
-# In[11]:
-
-
-float(mm_list[0][3])
-
-
 # # 1/15
 # - エクセルのVlookup風の作業
 #     - 半年置きのテナーで，空のswap rateのリストを作成
@@ -244,7 +224,7 @@ float(mm_list[0][3])
 # - get_end_day()関数の作成
 #     - 祝日，　土日勘案はせず．(ってかどうやるの？)
 
-# In[75]:
+# In[83]:
 
 
 def get_end_day(maturity, start_day):
@@ -253,16 +233,45 @@ def get_end_day(maturity, start_day):
     end_day = datetime_obj_start + datetime.timedelta(days=effective_days)
     return end_day.strftime('%Y/%m/%d')
 
-def get_DF_SW(money_market_list, swap_rate_list, tenor):
-    seq_len_of_swap_rate = int(30/tenor - 1)
+def calc_end_day(future_days, start_day):
+    datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
+    end_day = datetime_obj_start + datetime.timedelta(days=future_days)
+    return end_day.strftime('%Y/%m/%d')
+
+from scipy.interpolate import interp1d
+def interpolation_swap_rate(swap_rate_list):
+    xaxis_date = []
+    yaxis_swap_rate = []
+    for i in range(len(swap_rate_list)):
+        xaxis_date.append(float(swap_rate_list[i][0][0:len(swap_rate_list[i][0])-1]))
+        yaxis_swap_rate.append(float(swap_rate_list[i][3]))
+    f_interpolated_swap_rate = interp1d(xaxis_date, yaxis_swap_rate)
+    return f_interpolated_swap_rate
+
+from scipy.interpolate import interp1d
+def interpolation_extract_list(original_list, index_xaxis, index_yaxis):
+    xaxis = []
+    yaxis = []
+    for i in range(len(original_list)):
+        xaxis.append(float(original_list[i][index_xaxis]))
+        yaxis.append(float(original_list[i][index_yaxis]))
+    f_interpolation = interp1d(xaxis, yaxis)
+    return f_interpolation
+
+def get_interpolated_swap_rate_list(swap_rate_list, tenor):
+    max_maturity = float(swap_rate_list[-1][0][0:len(swap_rate_list[-1][0])-1])
+    seq_len_of_swap_rate = int(max_maturity/tenor - 1)
     array_swap_rate = [["", 0, 0, 0] for i in range(seq_len_of_swap_rate )]
     for i in range(2,seq_len_of_swap_rate +2):
-        array_swap_rate[i-2][0] = "{}Y".format(i*0.5)
+        array_swap_rate[i-2][0] = "{}Y".format(i*tenor)
+    func_interpolated_swap_rate = interpolation_swap_rate(swap_rate_list)
     ## for sentence is nested...
     ## I wanna reviese code, but I have not an idea. Please tell me better coding if you have.
     for i in range(len(array_swap_rate)):
         array_swap_rate[i][1] = swap_rate_list[0][1]
         array_swap_rate[i][2] = get_end_day(array_swap_rate[i][0], array_swap_rate[i][1])
+        interpolated_date = float(array_swap_rate[i][0][0:len(array_swap_rate[i][0])-1])
+        array_swap_rate[i][3] = float(func_interpolated_swap_rate(interpolated_date))
         for j in range(len(swap_rate_list)):
             if (array_swap_rate[i][0] in swap_rate_list[j][0]):
                 array_swap_rate[i] = swap_rate_list[j]
@@ -270,24 +279,194 @@ def get_DF_SW(money_market_list, swap_rate_list, tenor):
                 
     return array_swap_rate
 
+def get_DF(money_market_list, swap_rate_list, tenor):
+    interpolated_swap_rate_list_temp = get_interpolated_swap_rate_list(swap_rate_list, tenor)
+    interpolated_swap_rate_list = interpolated_swap_rate_list_temp[1:len(interpolated_swap_rate_list_temp)]
+    interpolated_DF_swap_rate_list = [["", "", "", 0.0, 0.0] for i in range(len(interpolated_swap_rate_list))]
+    ## interpolated_swa_rate_list[i].append(0)では，swap_rate_listが上書きされていく... append使って書くにはどうする？
+    for i in range(len(interpolated_swap_rate_list)):
+        interpolated_DF_swap_rate_list[i][0] = interpolated_swap_rate_list[i][0]
+        interpolated_DF_swap_rate_list[i][1] = interpolated_swap_rate_list[i][1]
+        interpolated_DF_swap_rate_list[i][2] = interpolated_swap_rate_list[i][2]
+        interpolated_DF_swap_rate_list[i][3] = float(interpolated_swap_rate_list[i][3])
+    discount_factor_len = len(money_market_list) + len(interpolated_swap_rate_list)
+    discount_factor_list = [["", "", "", 0.0, 0.0] for i in range(discount_factor_len)]
+    DF_money_market_list = get_DF_MM(money_market_list)
+    # listの結合 llist_new = listA + listB でいける
+    discount_factor_list = DF_money_market_list + interpolated_DF_swap_rate_list
+    
+    return discount_factor_list
+    
+def bootstrapping_DF_swap_rate(discount_factor_list, tenor_name):
+    extract_date_list = extract_1d_list(discount_factor_list, 0)
+    index_roll_tenor = extract_date_list.index(tenor_name)
+    # day_count_fraction
+    convention = 360
+    day_count_fraction = calc_daycount(discount_factor_list[index_roll_tenor][1],  discount_factor_list[index_roll_tenor][2], 360)
+    index_start_tenor = extract_date_list.index('1.5Y')
+    index_end_tenor = len(discount_factor_list)
+    discount_factor = np.zeros(len(discount_factor_list))
+#    for i in range(0, index_start_tenor):
+#        discount_factor[i] = discount_factor_list[i][4]
+    for i in range(index_start_tenor, index_end_tenor):
+        annuity = calc_annuity(discount_factor_list, discount_factor_list[i][0], tenor_name)
+        discount_factor[i] = 1.0 / (1.0 + day_count_fraction * discount_factor_list[i][3]) * (1.0 - discount_factor_list[i][3] * float(annuity) )
+        discount_factor_list[i][4] = discount_factor[i]
+    return discount_factor_list
 
-# In[76]:
+def extract_1d_list(discount_factor_list, index):
+    extracted_list = []
+    for i in range(len(discount_factor_list)):
+        extracted_list.append(discount_factor_list[i][index])
+    return extracted_list
+
+'''def calc_annuity(discount_factor_list, target_tenor, roll_tenor):
+    extract_date_list = extract_1d_list(discount_factor_list, 0)
+    index_target_tenor = extract_date_list.index(target_tenor)
+    num_of_roll_tenor_in_unit_year = float(transform_tenor_to_unit_in_year(roll_tenor))
+    num_of_target_tenor_in_unit_year = float(transform_tenor_to_unit_in_year(target_tenor))
+    num_of_roll = num_of_target_tenor_in_unit_year / num_of_roll_tenor_in_unit_year 
+    tenor_list_for_sum = ['{}Y'.format( i * num_of_roll_tenor_in_unit_year) for i in range(1, int(num_of_roll) + 1)]
+    for in in range(len(tenor_list_for_sum)):
+        if (tenor_list_for_sum[i][0:len(tenor_list_for_sum[i])-1] < 1.0):
+            tenor_list_for_sum[i] = tenor_list_for_sum[i][0:len(tenor_list_for_sum[i])-1]
+    # change expression #M to #Y
+'''
+
+def calc_annuity(discount_factor_list, target_tenor, roll_tenor):
+    extract_date_list = extract_1d_list(discount_factor_list, 0)
+    index_target_tenor = extract_date_list.index(target_tenor)
+    index_roll_tenor = extract_date_list.index(roll_tenor)
+    annuity = 0
+    convention = 360
+    day_count_fraction = calc_daycount(discount_factor_list[index_roll_tenor][1],  discount_factor_list[index_roll_tenor][2], 360)
+    for i in range(index_roll_tenor, index_target_tenor):
+        annuity += discount_factor_list[i][4] * day_count_fraction
+    return annuity
+    
+def transform_tenor_to_unit_in_year(tenor_string):
+    tenor = 0
+    tenor_unit = tenor_string[-1]
+    if (tenor_unit == 'Y'):
+        tenor = float(tenor_string[0:len(tenor_string)-1])
+    elif (tenor_unit == 'M'):
+        tenor = float(tenor_string[0:len(tenor_string)-1]) / 12
+    return tenor
+
+def interpolation_DF(discount_factor_list):
+    # make list including days between start_day and end_day in fourth column.
+    len_discount_factor_list = len(discount_factor_list)
+    interpolated_discount_factor_list = [["", "", "", 0.0, 0.0, 0.0] for i in range(len_discount_factor_list)]
+    for i in range(len_discount_factor_list):
+        interpolated_discount_factor_list[i][0] = discount_factor_list[i][0]
+        interpolated_discount_factor_list[i][1] = discount_factor_list[i][1]
+        interpolated_discount_factor_list[i][2] = discount_factor_list[i][2]
+        interpolated_discount_factor_list[i][4] = discount_factor_list[i][3]
+        interpolated_discount_factor_list[i][5] = discount_factor_list[i][4]
+    for i in range(len_discount_factor_list):
+        if (discount_factor_list[i][0] == 'O/N'):
+            interpolated_discount_factor_list[i][3] = calc_days(discount_factor_list[i][1], discount_factor_list[i][2])
+            # TODO going to revise 1 and 2 day-count. have to consider Sat., Sun. and Holidays. 
+        elif (discount_factor_list[i][0] == 'T/N'):
+            interpolated_discount_factor_list[i][3] = calc_days(discount_factor_list[i][1], discount_factor_list[i][2]) + 1
+        else:
+            interpolated_discount_factor_list[i][3] = calc_days(discount_factor_list[i][1], discount_factor_list[i][2]) + 2
+    # interpolate DF
+    index_days = 3
+    index_DF = 5
+    func_interpolation_DF = interpolation_extract_list(interpolated_discount_factor_list, index_days, index_DF)
+    return func_interpolation_DF
+
+def get_interpolated_DF(discount_factor_list):
+    max_maturity = float(discount_factor_list[-1][0][0:len(discount_factor_list[-1][0])-1]) # assume unit in year like 30.0"Y" .
+    len_interpolated_DF_list = int(max_maturity * 365)
+    contract_day = discount_factor_list[0][1]
+    interpolated_DF_list = [[i, contract_day, "", 0.0] for i in range(0, len_interpolated_DF_list)]
+    interpolated_DF_list[0][2] = contract_day
+    interpolated_DF_list[0][3] = 1.0
+    func_interpolation_DF = interpolation_DF(discount_factor_list)
+    for i in range(1, len_interpolated_DF_list):
+        interpolated_DF_list[i][2] = calc_end_day(i, contract_day)
+        interpolated_DF_list[i][3] = float(func_interpolation_DF(i))
+    return interpolated_DF_list
 
 
-get_DF_SW(mm_list, swap_rate_list, 1/2)
+# In[85]:
 
 
-# In[74]:
+import csv
+
+with open('interpolated_DF_list.csv', 'w') as f:
+    writer = csv.writer(f, lineterminator='\n') # 改行コード（\n）を指定しておく
+    writer.writerows(get_interpolated_DF(bootstrapping_DF_swap_rate(DF_LIST, '6M'))) # 2次元配列も書き込める
 
 
-def get_end_day(maturity, start_day):
-    datetime_obj_start = datetime.datetime.strptime(start_day, '%Y/%m/%d')
-    effective_days = float(maturity[0:len(maturity)-1])*365
-    end_day = datetime_obj_start + datetime.timedelta(days=effective_days)
-    return end_day.strftime('%Y/%m/%d')
+# In[84]:
 
 
-# In[48]:
+DF_LIST = get_DF(mm_list, swap_rate_list, 1/2);
+bootstrapping_DF_swap_rate(DF_LIST, '6M');
+f = interpolation_DF(bootstrapping_DF_swap_rate(DF_LIST, '6M'))
+f(10950)
+get_interpolated_DF(bootstrapping_DF_swap_rate(DF_LIST, '6M'))
+
+
+# In[10]:
+
+
+calc_annuity(DF_LIST, '1.5Y', '6M')
+
+
+# In[154]:
+
+
+len(bootstrapping_DF_swap_rate(DF_LIST, '6M'))
+
+
+# In[164]:
+
+
+x = np.arange(67)
+y = []
+for i in range(len(bootstrapping_DF_swap_rate(DF_LIST, '6M'))):
+    y.append(bootstrapping_DF_swap_rate(DF_LIST, '6M')[i][4])
+plt.plot(x,y)
+
+
+# In[125]:
+
+
+calc_daycount(DF_LIST[7][1],DF_LIST[7][2],360)
+
+
+# In[117]:
+
+
+get_DF(mm_list, swap_rate_list, 1/2)
+
+
+# In[207]:
+
+
+get_interpolated_swap_rate_list(swap_rate_list, 1/2)
+
+
+# In[250]:
+
+
+swap_rate_list
+
+
+# In[195]:
+
+
+a = [[1,2], [3,4]]
+for i in range(2):
+    a[i].append(0)
+a
+
+
+# In[60]:
 
 
 import datetime
@@ -296,25 +475,7 @@ d = now + datetime.timedelta(days=10)
 d.strftime('%Y/%m/%d')
 
 
-# In[63]:
-
-
-get_end_day('2017/12/25', '1.5Y')
-
-
-# In[108]:
-
-
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
-x = np.linspace(0, 10, num=11, endpoint=True)
-y = np.cos(-x**2/9.0)
-f = interp1d(x, y)
-xnew = np.linspace(0, 10, num=41, endpoint=True)
-plt.plot(x, y, 'o', xnew, f(xnew), '-')
-
-
-# In[ ]:
+# In[62]:
 
 
 x = np.array([0,1,2,3,4,5,6,7,8,9,10])
@@ -322,9 +483,10 @@ y = np.array([20,20,15,14,1,4,2,6,1,1,1])
 f = interp1d(x,y)
 
 
-# In[134]:
+# In[63]:
 
 
+from scipy.interpolate import interp1d
 x = []
 y = []
 for i in range(len(swap_rate_list)):
@@ -333,18 +495,9 @@ for i in range(len(swap_rate_list)):
 print(x)
 print(y)
 f = interp1d(x,y)
-xnew = np.linspace(1, 30, num=30, endpoint=True)
+xnew = np.linspace(1, 30, num=60, endpoint=True)
 plt.plot(xnew, f(xnew), '-')
-f(2.1)
-
-
-# In[116]:
-
-
-a = []
-a.append([1,2])
-a.append([2,3])
-a
+f(1.5)
 
 
 # ### エラーメッセージ
