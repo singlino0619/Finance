@@ -96,11 +96,54 @@ DF1.getDF()
 '''
 
 
+# In[3]:
+
+
+import csv
+
+with open('sample_moneymarket.csv', 'r') as csvfile:
+    reader_obj = csv.reader(csvfile)
+    # rewritten header_obj by using next method(???)
+    header_obj = next(reader_obj)
+    mm_list = []
+    for row in reader_obj:
+        mm_list.append(row)
+
+mm_list
+
+
+# In[1]:
+
+
+import csv
+
+with open('sample_swaprate.csv', 'r') as csvfile:
+    reader_obj = csv.reader(csvfile)
+    # rewritten header_obj by using next method(???)
+    header_obj = next(reader_obj)
+    swap_rate_list = []
+    for row in reader_obj:
+        swap_rate_list.append(row)
+    temp_num = [[] for i in range(len(swap_rate_list))] # comprehension expression for making null list.
+    ### proceccing the expression for the type of 1Y to 1.0Y.
+    for i in range(len(swap_rate_list)):
+        if (len(swap_rate_list[i][0]) == 2):
+            temp_num[i] = "{:.1f}".format(int(swap_rate_list[i][0][0])) + swap_rate_list[i][0][1]
+            swap_rate_list[i][0] = temp_num[i]
+        elif (len(swap_rate_list[i][0]) == 3):
+            temp_num[i] = "{:.1f}".format(int(swap_rate_list[i][0][0:2])) + swap_rate_list[i][0][2]
+            swap_rate_list[i][0] = temp_num[i]
+        else:
+            break
+
+swap_rate_list
+
+
 # # 1/20
 # - money marketのDFのリストの形式を変更
 #     - [tenor, DF]　から [tenor, start, end, labor_rate, DF]の形式に変更
 
-# In[18]:
+# In[9]:
 
 
 get_ipython().magic('matplotlib inline')
@@ -168,51 +211,12 @@ list_discountfactor
 # draw_DF(list_discountfactor)
 
 
-# In[2]:
-
-
-with open('sample_moneymarket.csv', 'r') as csvfile:
-    reader_obj = csv.reader(csvfile)
-    # rewritten header_obj by using next method(???)
-    header_obj = next(reader_obj)
-    mm_list = []
-    for row in reader_obj:
-        mm_list.append(row)
-
-mm_list
-
-
 # # 1/15
 # - データの加工
 #     - 小数点表記 ("{:.1f}".format())
 #     - 文字列の結合　（+でできる）
 # - 空のリスト作成
 #     - 内包表記 -> [5 for i in range(10)] -> 5が１０個のリスト
-
-# In[3]:
-
-
-with open('sample_swaprate.csv', 'r') as csvfile:
-    reader_obj = csv.reader(csvfile)
-    # rewritten header_obj by using next method(???)
-    header_obj = next(reader_obj)
-    swap_rate_list = []
-    for row in reader_obj:
-        swap_rate_list.append(row)
-    temp_num = [[] for i in range(len(swap_rate_list))] # comprehension expression for making null list.
-    ### proceccing the expression for the type of 1Y to 1.0Y.
-    for i in range(len(swap_rate_list)):
-        if (len(swap_rate_list[i][0]) == 2):
-            temp_num[i] = "{:.1f}".format(int(swap_rate_list[i][0][0])) + swap_rate_list[i][0][1]
-            swap_rate_list[i][0] = temp_num[i]
-        elif (len(swap_rate_list[i][0]) == 3):
-            temp_num[i] = "{:.1f}".format(int(swap_rate_list[i][0][0:2])) + swap_rate_list[i][0][2]
-            swap_rate_list[i][0] = temp_num[i]
-        else:
-            break
-
-swap_rate_list
-
 
 # # 1/15
 # - エクセルのVlookup風の作業
@@ -224,7 +228,7 @@ swap_rate_list
 # - get_end_day()関数の作成
 #     - 祝日，　土日勘案はせず．(ってかどうやるの？)
 
-# In[83]:
+# In[10]:
 
 
 def get_end_day(maturity, start_day):
@@ -401,7 +405,7 @@ with open('interpolated_DF_list.csv', 'w') as f:
     writer.writerows(get_interpolated_DF(bootstrapping_DF_swap_rate(DF_LIST, '6M'))) # 2次元配列も書き込める
 
 
-# In[84]:
+# In[11]:
 
 
 DF_LIST = get_DF(mm_list, swap_rate_list, 1/2);
@@ -409,18 +413,6 @@ bootstrapping_DF_swap_rate(DF_LIST, '6M');
 f = interpolation_DF(bootstrapping_DF_swap_rate(DF_LIST, '6M'))
 f(10950)
 get_interpolated_DF(bootstrapping_DF_swap_rate(DF_LIST, '6M'))
-
-
-# In[10]:
-
-
-calc_annuity(DF_LIST, '1.5Y', '6M')
-
-
-# In[154]:
-
-
-len(bootstrapping_DF_swap_rate(DF_LIST, '6M'))
 
 
 # In[164]:
@@ -431,56 +423,6 @@ y = []
 for i in range(len(bootstrapping_DF_swap_rate(DF_LIST, '6M'))):
     y.append(bootstrapping_DF_swap_rate(DF_LIST, '6M')[i][4])
 plt.plot(x,y)
-
-
-# In[125]:
-
-
-calc_daycount(DF_LIST[7][1],DF_LIST[7][2],360)
-
-
-# In[117]:
-
-
-get_DF(mm_list, swap_rate_list, 1/2)
-
-
-# In[207]:
-
-
-get_interpolated_swap_rate_list(swap_rate_list, 1/2)
-
-
-# In[250]:
-
-
-swap_rate_list
-
-
-# In[195]:
-
-
-a = [[1,2], [3,4]]
-for i in range(2):
-    a[i].append(0)
-a
-
-
-# In[60]:
-
-
-import datetime
-now = datetime.datetime.today()
-d = now + datetime.timedelta(days=10)
-d.strftime('%Y/%m/%d')
-
-
-# In[62]:
-
-
-x = np.array([0,1,2,3,4,5,6,7,8,9,10])
-y = np.array([20,20,15,14,1,4,2,6,1,1,1])
-f = interp1d(x,y)
 
 
 # In[63]:

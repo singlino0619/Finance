@@ -397,6 +397,77 @@ discount factors gradually is called Bootstrap method.
 {\color{outcolor}Out[{\color{outcolor}174}]:} "DF1 = getDF\_moneymarket(0.3, '2017/12/18', '2018/3/20')\textbackslash{}nDF1.getDF()\textbackslash{}n"
 \end{Verbatim}
             
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}3}]:} \PY{k+kn}{import} \PY{n+nn}{csv}
+        
+        \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sample\PYZus{}moneymarket.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvfile}\PY{p}{:}
+            \PY{n}{reader\PYZus{}obj} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvfile}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} rewritten header\PYZus{}obj by using next method(???)}
+            \PY{n}{header\PYZus{}obj} \PY{o}{=} \PY{n+nb}{next}\PY{p}{(}\PY{n}{reader\PYZus{}obj}\PY{p}{)}
+            \PY{n}{mm\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{reader\PYZus{}obj}\PY{p}{:}
+                \PY{n}{mm\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{row}\PY{p}{)}
+        
+        \PY{n}{mm\PYZus{}list}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}3}]:} [['O/N', '2017/12/23', '2017/12/24', '0.014348'],
+         ['T/N', '2017/12/24', '2017/12/25', '0.014348'],
+         ['1W', '2017/12/25', '2018/1/1', '0.014876'],
+         ['2W', '2017/12/25', '2018/1/8', '0.015'],
+         ['1M', '2017/12/25', '2018/1/24', '0.01563'],
+         ['2M', '2017/12/25', '2018/2/23', '0.01616'],
+         ['3M', '2017/12/25', '2018/3/25', '0.01685'],
+         ['6M', '2017/12/25', '2018/6/23', '0.01833'],
+         ['1Y', '2017/12/25', '2018/12/20', '0.021']]
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{import} \PY{n+nn}{csv}
+        
+        \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sample\PYZus{}swaprate.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvfile}\PY{p}{:}
+            \PY{n}{reader\PYZus{}obj} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvfile}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} rewritten header\PYZus{}obj by using next method(???)}
+            \PY{n}{header\PYZus{}obj} \PY{o}{=} \PY{n+nb}{next}\PY{p}{(}\PY{n}{reader\PYZus{}obj}\PY{p}{)}
+            \PY{n}{swap\PYZus{}rate\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{reader\PYZus{}obj}\PY{p}{:}
+                \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{row}\PY{p}{)}
+            \PY{n}{temp\PYZus{}num} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{p}{]} \PY{c+c1}{\PYZsh{} comprehension expression for making null list.}
+            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} proceccing the expression for the type of 1Y to 1.0Y.}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{k}{if} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}:.1f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{int}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+                    \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+                \PY{k}{elif} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}:.1f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{int}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}
+                    \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+                \PY{k}{else}\PY{p}{:}
+                    \PY{k}{break}
+        
+        \PY{n}{swap\PYZus{}rate\PYZus{}list}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+        ---------------------------------------------------------------------------
+
+        NameError                                 Traceback (most recent call last)
+
+        <ipython-input-1-598ae1a76b85> in <module>()
+          1 with open('sample\_swaprate.csv', 'r') as csvfile:
+    ----> 2     reader\_obj = csv.reader(csvfile)
+          3     \# rewritten header\_obj by using next method(???)
+          4     header\_obj = next(reader\_obj)
+          5     swap\_rate\_list = []
+
+
+        NameError: name 'csv' is not defined
+
+    \end{Verbatim}
+
     \section{1/20}\label{section}
 
 \begin{itemize}
@@ -413,86 +484,14 @@ discount factors gradually is called Bootstrap method.
 \end{itemize}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}18}]:} \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
-         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
-         \PY{k+kn}{import} \PY{n+nn}{csv}
-         \PY{k+kn}{import} \PY{n+nn}{time}
-         \PY{k+kn}{import} \PY{n+nn}{datetime}
-         \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
-         
-         \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sample\PYZus{}moneymarket.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvfile}\PY{p}{:}
-             \PY{n}{reader\PYZus{}obj} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvfile}\PY{p}{)}
-             \PY{c+c1}{\PYZsh{} rewritten header\PYZus{}obj by using next method(???)}
-             \PY{n}{header\PYZus{}obj} \PY{o}{=} \PY{n+nb}{next}\PY{p}{(}\PY{n}{reader\PYZus{}obj}\PY{p}{)}
-             \PY{n}{mm\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-             \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{reader\PYZus{}obj}\PY{p}{:}
-                 \PY{n}{mm\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{row}\PY{p}{)}
-         
-         \PY{k}{def} \PY{n+nf}{get\PYZus{}DF\PYZus{}MM}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{)}\PY{p}{:}
-             \PY{n}{list\PYZus{}len} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{)}
-         \PY{c+c1}{\PYZsh{}    discount\PYZus{}factor = np.zeros(list\PYZus{}len*2).reshape(list\PYZus{}len, 2)}
-             \PY{n}{discount\PYZus{}factor\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mf}{0.0}\PY{p}{,}\PY{l+m+mf}{0.0}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{]}
-         \PY{c+c1}{\PYZsh{}    discount\PYZus{}factor = [[\PYZdq{}\PYZdq{}, 0.0] for i in range(list\PYZus{}len)]}
-             \PY{n}{day\PYZus{}count\PYZus{}fraction} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{list\PYZus{}len}\PY{p}{)}
-             \PY{c+c1}{\PYZsh{} substitution the kinf of trade}
-             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{:}
-                 \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-                 \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
-                 \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}
-                 \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}
-             \PY{c+c1}{\PYZsh{} calc daycount\PYZhy{}fraction}
-             \PY{n}{convention} \PY{o}{=} \PY{l+m+mf}{360.0}
-             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{)}\PY{p}{)}\PY{p}{:}
-                 \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{calc\PYZus{}daycount}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{n}{convention}\PY{p}{)}
-             \PY{c+c1}{\PYZsh{} calculate DF of O/N}
-             \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{1.0} \PY{o}{/} \PY{p}{(}\PY{l+m+mf}{1.0} \PY{o}{+} \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{*} \PY{n+nb}{float}\PY{p}{(}\PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{)}
-             \PY{c+c1}{\PYZsh{} calculate DF of  T/N}
-             \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{=} \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{/}\PY{p}{(}\PY{l+m+mf}{1.0} \PY{o}{+} \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n+nb}{float}\PY{p}{(}\PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{)}
-             \PY{c+c1}{\PYZsh{} calculate DF after 1W}
-             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{:}
-                 \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{=} \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{/} \PY{p}{(}\PY{l+m+mf}{1.0} \PY{o}{+} \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n+nb}{float}\PY{p}{(}\PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{)}
-             \PY{k}{return} \PY{n}{discount\PYZus{}factor\PYZus{}list}
-                                            
-         \PY{k}{def} \PY{n+nf}{calc\PYZus{}daycount}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{n}{end\PYZus{}day}\PY{p}{,} \PY{n}{convention}\PY{p}{)}\PY{p}{:}
-             \PY{n}{datetime\PYZus{}obj\PYZus{}start} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-             \PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{end\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-             \PY{n}{daycount} \PY{o}{=} \PY{p}{(}\PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n}{datetime\PYZus{}obj\PYZus{}start}\PY{p}{)}\PY{o}{.}\PY{n}{days} \PY{o}{/} \PY{n}{convention}
-             \PY{k}{return} \PY{n}{daycount}
-         
-         \PY{k}{def} \PY{n+nf}{calc\PYZus{}days}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{n}{end\PYZus{}day}\PY{p}{)}\PY{p}{:}
-             \PY{n}{datetime\PYZus{}obj\PYZus{}start} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-             \PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{end\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-             \PY{k}{return} \PY{p}{(}\PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n}{datetime\PYZus{}obj\PYZus{}start}\PY{p}{)}\PY{o}{.}\PY{n}{days}
-             
-         \PY{k}{def} \PY{n+nf}{draw\PYZus{}DF}\PY{p}{(}\PY{n}{seq\PYZus{}discount\PYZus{}factor}\PY{p}{)}\PY{p}{:}
-                 \PY{n}{list\PYZus{}len} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{seq\PYZus{}discount\PYZus{}factor}\PY{p}{)}
-                 \PY{n}{seq\PYZus{}DF} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{list\PYZus{}len}\PY{p}{)}
-                 \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{:}
-                     \PY{n}{seq\PYZus{}DF}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{seq\PYZus{}discount\PYZus{}factor}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{seq\PYZus{}DF}\PY{p}{)}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{ylim}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mf}{1.0}\PY{p}{]}\PY{p}{)}
-         
-         
-         \PY{n}{list\PYZus{}discountfactor} \PY{o}{=} \PY{n}{get\PYZus{}DF\PYZus{}MM}\PY{p}{(}\PY{n}{mm\PYZus{}list}\PY{p}{)}
-         \PY{n}{list\PYZus{}discountfactor}
-         \PY{c+c1}{\PYZsh{} draw\PYZus{}DF(list\PYZus{}discountfactor)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}18}]:} [['O/N', '2017/12/23', '2017/12/24', 0.014348, 0.99996014603284633],
-          ['T/N', '2017/12/24', '2017/12/25', 0.014348, 0.99992029365403134],
-          ['1W', '2017/12/25', '2018/1/1', 0.014876, 0.99963114479189386],
-          ['2W', '2017/12/25', '2018/1/8', 0.015, 0.99933734686835807],
-          ['1M', '2017/12/25', '2018/1/24', 0.01563, 0.99861959163592562],
-          ['2M', '2017/12/25', '2018/2/23', 0.01616, 0.9972344089791807],
-          ['3M', '2017/12/25', '2018/3/25', 0.01685, 0.99572579872689437],
-          ['6M', '2017/12/25', '2018/6/23', 0.01833, 0.99083925191027356],
-          ['1Y', '2017/12/25', '2018/12/20', 0.021, 0.97935386254067724]]
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sample\PYZus{}moneymarket.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvfile}\PY{p}{:}
+{\color{incolor}In [{\color{incolor}9}]:} \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{import} \PY{n+nn}{csv}
+        \PY{k+kn}{import} \PY{n+nn}{time}
+        \PY{k+kn}{import} \PY{n+nn}{datetime}
+        \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+        
+        \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sample\PYZus{}moneymarket.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvfile}\PY{p}{:}
             \PY{n}{reader\PYZus{}obj} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvfile}\PY{p}{)}
             \PY{c+c1}{\PYZsh{} rewritten header\PYZus{}obj by using next method(???)}
             \PY{n}{header\PYZus{}obj} \PY{o}{=} \PY{n+nb}{next}\PY{p}{(}\PY{n}{reader\PYZus{}obj}\PY{p}{)}
@@ -500,20 +499,67 @@ discount factors gradually is called Bootstrap method.
             \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{reader\PYZus{}obj}\PY{p}{:}
                 \PY{n}{mm\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{row}\PY{p}{)}
         
-        \PY{n}{mm\PYZus{}list}
+        \PY{k}{def} \PY{n+nf}{get\PYZus{}DF\PYZus{}MM}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{)}\PY{p}{:}
+            \PY{n}{list\PYZus{}len} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}    discount\PYZus{}factor = np.zeros(list\PYZus{}len*2).reshape(list\PYZus{}len, 2)}
+            \PY{n}{discount\PYZus{}factor\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mf}{0.0}\PY{p}{,}\PY{l+m+mf}{0.0}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{]}
+        \PY{c+c1}{\PYZsh{}    discount\PYZus{}factor = [[\PYZdq{}\PYZdq{}, 0.0] for i in range(list\PYZus{}len)]}
+            \PY{n}{day\PYZus{}count\PYZus{}fraction} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{list\PYZus{}len}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} substitution the kinf of trade}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{:}
+                \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+                \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+                \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}
+                \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} calc daycount\PYZhy{}fraction}
+            \PY{n}{convention} \PY{o}{=} \PY{l+m+mf}{360.0}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{calc\PYZus{}daycount}\PY{p}{(}\PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{money\PYZus{}market\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{n}{convention}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} calculate DF of O/N}
+            \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{1.0} \PY{o}{/} \PY{p}{(}\PY{l+m+mf}{1.0} \PY{o}{+} \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{*} \PY{n+nb}{float}\PY{p}{(}\PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} calculate DF of  T/N}
+            \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{=} \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{/}\PY{p}{(}\PY{l+m+mf}{1.0} \PY{o}{+} \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n+nb}{float}\PY{p}{(}\PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} calculate DF after 1W}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{:}
+                \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{=} \PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]} \PY{o}{/} \PY{p}{(}\PY{l+m+mf}{1.0} \PY{o}{+} \PY{n}{day\PYZus{}count\PYZus{}fraction}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n+nb}{float}\PY{p}{(}\PY{n}{discount\PYZus{}factor\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+            \PY{k}{return} \PY{n}{discount\PYZus{}factor\PYZus{}list}
+                                           
+        \PY{k}{def} \PY{n+nf}{calc\PYZus{}daycount}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{n}{end\PYZus{}day}\PY{p}{,} \PY{n}{convention}\PY{p}{)}\PY{p}{:}
+            \PY{n}{datetime\PYZus{}obj\PYZus{}start} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{end\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{daycount} \PY{o}{=} \PY{p}{(}\PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n}{datetime\PYZus{}obj\PYZus{}start}\PY{p}{)}\PY{o}{.}\PY{n}{days} \PY{o}{/} \PY{n}{convention}
+            \PY{k}{return} \PY{n}{daycount}
+        
+        \PY{k}{def} \PY{n+nf}{calc\PYZus{}days}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{n}{end\PYZus{}day}\PY{p}{)}\PY{p}{:}
+            \PY{n}{datetime\PYZus{}obj\PYZus{}start} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{end\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{k}{return} \PY{p}{(}\PY{n}{datetime\PYZus{}obj\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n}{datetime\PYZus{}obj\PYZus{}start}\PY{p}{)}\PY{o}{.}\PY{n}{days}
+            
+        \PY{k}{def} \PY{n+nf}{draw\PYZus{}DF}\PY{p}{(}\PY{n}{seq\PYZus{}discount\PYZus{}factor}\PY{p}{)}\PY{p}{:}
+                \PY{n}{list\PYZus{}len} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{seq\PYZus{}discount\PYZus{}factor}\PY{p}{)}
+                \PY{n}{seq\PYZus{}DF} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{list\PYZus{}len}\PY{p}{)}
+                \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{list\PYZus{}len}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{seq\PYZus{}DF}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{seq\PYZus{}discount\PYZus{}factor}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+                \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{seq\PYZus{}DF}\PY{p}{)}
+                \PY{n}{plt}\PY{o}{.}\PY{n}{ylim}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mf}{1.0}\PY{p}{]}\PY{p}{)}
+        
+        
+        \PY{n}{list\PYZus{}discountfactor} \PY{o}{=} \PY{n}{get\PYZus{}DF\PYZus{}MM}\PY{p}{(}\PY{n}{mm\PYZus{}list}\PY{p}{)}
+        \PY{n}{list\PYZus{}discountfactor}
+        \PY{c+c1}{\PYZsh{} draw\PYZus{}DF(list\PYZus{}discountfactor)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}2}]:} [['O/N', '2017/12/23', '2017/12/24', '0.014348'],
-         ['T/N', '2017/12/24', '2017/12/25', '0.014348'],
-         ['1W', '2017/12/25', '2018/1/1', '0.014876'],
-         ['2W', '2017/12/25', '2018/1/8', '0.015'],
-         ['1M', '2017/12/25', '2018/1/24', '0.01563'],
-         ['2M', '2017/12/25', '2018/2/23', '0.01616'],
-         ['3M', '2017/12/25', '2018/3/25', '0.01685'],
-         ['6M', '2017/12/25', '2018/6/23', '0.01833'],
-         ['1Y', '2017/12/25', '2018/12/20', '0.021']]
+{\color{outcolor}Out[{\color{outcolor}9}]:} [['O/N', '2017/12/23', '2017/12/24', 0.014348, 0.99996014603284633],
+         ['T/N', '2017/12/24', '2017/12/25', 0.014348, 0.99992029365403134],
+         ['1W', '2017/12/25', '2018/1/1', 0.014876, 0.99963114479189386],
+         ['2W', '2017/12/25', '2018/1/8', 0.015, 0.99933734686835807],
+         ['1M', '2017/12/25', '2018/1/24', 0.01563, 0.99861959163592562],
+         ['2M', '2017/12/25', '2018/2/23', 0.01616, 0.9972344089791807],
+         ['3M', '2017/12/25', '2018/3/25', 0.01685, 0.99572579872689437],
+         ['6M', '2017/12/25', '2018/6/23', 0.01833, 0.99083925191027356],
+         ['1Y', '2017/12/25', '2018/12/20', 0.021, 0.97935386254067724]]
 \end{Verbatim}
             
     \section{1/15}\label{section}
@@ -541,46 +587,6 @@ discount factors gradually is called Bootstrap method.
   \end{itemize}
 \end{itemize}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}3}]:} \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sample\PYZus{}swaprate.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvfile}\PY{p}{:}
-            \PY{n}{reader\PYZus{}obj} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvfile}\PY{p}{)}
-            \PY{c+c1}{\PYZsh{} rewritten header\PYZus{}obj by using next method(???)}
-            \PY{n}{header\PYZus{}obj} \PY{o}{=} \PY{n+nb}{next}\PY{p}{(}\PY{n}{reader\PYZus{}obj}\PY{p}{)}
-            \PY{n}{swap\PYZus{}rate\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-            \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{reader\PYZus{}obj}\PY{p}{:}
-                \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{row}\PY{p}{)}
-            \PY{n}{temp\PYZus{}num} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{p}{]} \PY{c+c1}{\PYZsh{} comprehension expression for making null list.}
-            \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} proceccing the expression for the type of 1Y to 1.0Y.}
-            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{p}{:}
-                \PY{k}{if} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
-                    \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}:.1f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{int}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
-                    \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]}
-                \PY{k}{elif} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{:}
-                    \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}:.1f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{int}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}
-                    \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{temp\PYZus{}num}\PY{p}{[}\PY{n}{i}\PY{p}{]}
-                \PY{k}{else}\PY{p}{:}
-                    \PY{k}{break}
-        
-        \PY{n}{swap\PYZus{}rate\PYZus{}list}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}3}]:} [['1.0Y', '2017/12/25', '2018/12/25', '0.01904'],
-         ['2.0Y', '2017/12/25', '2019/12/25', '0.02086'],
-         ['3.0Y', '2017/12/25', '2020/12/24', '0.02187'],
-         ['4.0Y', '2017/12/25', '2021/12/24', '0.02248'],
-         ['5.0Y', '2017/12/25', '2022/12/24', '0.02295'],
-         ['6.0Y', '2017/12/25', '2023/12/24', '0.02337'],
-         ['7.0Y', '2017/12/25', '2024/12/23', '0.02376'],
-         ['8.0Y', '2017/12/25', '2025/12/23', '0.02411'],
-         ['9.0Y', '2017/12/25', '2026/12/23', '0.02444'],
-         ['10.0Y', '2017/12/25', '2027/12/23', '0.02475'],
-         ['15.0Y', '2017/12/25', '2032/12/21', '0.02582'],
-         ['20.0Y', '2017/12/25', '2037/12/20', '0.02632'],
-         ['30.0Y', '2017/12/25', '2047/12/18', '0.02646']]
-\end{Verbatim}
-            
     \section{1/15}\label{section}
 
 \begin{itemize}
@@ -614,7 +620,7 @@ discount factors gradually is called Bootstrap method.
 \end{itemize}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}83}]:} \PY{k}{def} \PY{n+nf}{get\PYZus{}end\PYZus{}day}\PY{p}{(}\PY{n}{maturity}\PY{p}{,} \PY{n}{start\PYZus{}day}\PY{p}{)}\PY{p}{:}
+{\color{incolor}In [{\color{incolor}10}]:} \PY{k}{def} \PY{n+nf}{get\PYZus{}end\PYZus{}day}\PY{p}{(}\PY{n}{maturity}\PY{p}{,} \PY{n}{start\PYZus{}day}\PY{p}{)}\PY{p}{:}
              \PY{n}{datetime\PYZus{}obj\PYZus{}start} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{start\PYZus{}day}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
              \PY{n}{effective\PYZus{}days} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n}{maturity}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{n+nb}{len}\PY{p}{(}\PY{n}{maturity}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{o}{*}\PY{l+m+mi}{365}
              \PY{n}{end\PYZus{}day} \PY{o}{=} \PY{n}{datetime\PYZus{}obj\PYZus{}start} \PY{o}{+} \PY{n}{datetime}\PY{o}{.}\PY{n}{timedelta}\PY{p}{(}\PY{n}{days}\PY{o}{=}\PY{n}{effective\PYZus{}days}\PY{p}{)}
@@ -789,7 +795,7 @@ discount factors gradually is called Bootstrap method.
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}84}]:} \PY{n}{DF\PYZus{}LIST} \PY{o}{=} \PY{n}{get\PYZus{}DF}\PY{p}{(}\PY{n}{mm\PYZus{}list}\PY{p}{,} \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{;}
+{\color{incolor}In [{\color{incolor}11}]:} \PY{n}{DF\PYZus{}LIST} \PY{o}{=} \PY{n}{get\PYZus{}DF}\PY{p}{(}\PY{n}{mm\PYZus{}list}\PY{p}{,} \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{;}
          \PY{n}{bootstrapping\PYZus{}DF\PYZus{}swap\PYZus{}rate}\PY{p}{(}\PY{n}{DF\PYZus{}LIST}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{6M}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{;}
          \PY{n}{f} \PY{o}{=} \PY{n}{interpolation\PYZus{}DF}\PY{p}{(}\PY{n}{bootstrapping\PYZus{}DF\PYZus{}swap\PYZus{}rate}\PY{p}{(}\PY{n}{DF\PYZus{}LIST}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{6M}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
          \PY{n}{f}\PY{p}{(}\PY{l+m+mi}{10950}\PY{p}{)}
@@ -798,7 +804,7 @@ discount factors gradually is called Bootstrap method.
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}84}]:} [[0, '2017/12/23', '2017/12/23', 1.0],
+{\color{outcolor}Out[{\color{outcolor}11}]:} [[0, '2017/12/23', '2017/12/23', 1.0],
           [1, '2017/12/23', '2017/12/24', 0.9999601460328463],
           [2, '2017/12/23', '2017/12/25', 0.9999202936540313],
           [3, '2017/12/23', '2017/12/26', 0.999878986673726],
@@ -1802,24 +1808,6 @@ discount factors gradually is called Bootstrap method.
 \end{Verbatim}
             
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{calc\PYZus{}annuity}\PY{p}{(}\PY{n}{DF\PYZus{}LIST}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{1.5Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{6M}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}10}]:} 0.9850965572254754
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}154}]:} \PY{n+nb}{len}\PY{p}{(}\PY{n}{bootstrapping\PYZus{}DF\PYZus{}swap\PYZus{}rate}\PY{p}{(}\PY{n}{DF\PYZus{}LIST}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{6M}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}154}]:} 67
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
 {\color{incolor}In [{\color{incolor}164}]:} \PY{n}{x} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{67}\PY{p}{)}
           \PY{n}{y} \PY{o}{=} \PY{p}{[}\PY{p}{]}
           \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{bootstrapping\PYZus{}DF\PYZus{}swap\PYZus{}rate}\PY{p}{(}\PY{n}{DF\PYZus{}LIST}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{6M}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{:}
@@ -1832,214 +1820,11 @@ discount factors gradually is called Bootstrap method.
 {\color{outcolor}Out[{\color{outcolor}164}]:} [<matplotlib.lines.Line2D at 0x18148c9128>]
 \end{Verbatim}
             
-%    \begin{center}
-%    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Swap_Pricing_files/Swap_Pricing_15_1.png}
-%    \end{center}
-%    { \hspace*{\fill} \\}
+    % \begin{center}		%
+    % \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Swap_Pricing_files/Swap_Pricing_13_1.png}
+    % \end{center}
+    % { \hspace*{\fill} \\    }
     
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}125}]:} \PY{n}{calc\PYZus{}daycount}\PY{p}{(}\PY{n}{DF\PYZus{}LIST}\PY{p}{[}\PY{l+m+mi}{7}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{n}{DF\PYZus{}LIST}\PY{p}{[}\PY{l+m+mi}{7}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,}\PY{l+m+mi}{360}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}125}]:} 0.5
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}117}]:} \PY{n}{get\PYZus{}DF}\PY{p}{(}\PY{n}{mm\PYZus{}list}\PY{p}{,} \PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}117}]:} [['O/N', '2017/12/23', '2017/12/24', 0.014348, 0.99996014603284633],
-           ['T/N', '2017/12/24', '2017/12/25', 0.014348, 0.99992029365403134],
-           ['1W', '2017/12/25', '2018/1/1', 0.014876, 0.99963114479189386],
-           ['2W', '2017/12/25', '2018/1/8', 0.015, 0.99933734686835807],
-           ['1M', '2017/12/25', '2018/1/24', 0.01563, 0.99861959163592562],
-           ['2M', '2017/12/25', '2018/2/23', 0.01616, 0.9972344089791807],
-           ['3M', '2017/12/25', '2018/3/25', 0.01685, 0.99572579872689437],
-           ['6M', '2017/12/25', '2018/6/23', 0.01833, 0.99083925191027356],
-           ['1Y', '2017/12/25', '2018/12/20', 0.021, 0.97935386254067724],
-           ['1.5Y', '2017/12/25', '2019/06/25', 0.019950000000000002, 0.0],
-           ['2.0Y', '2017/12/25', '2019/12/25', '0.02086', 0.0],
-           ['2.5Y', '2017/12/25', '2020/06/24', 0.021365000000000002, 0.0],
-           ['3.0Y', '2017/12/25', '2020/12/24', '0.02187', 0.0],
-           ['3.5Y', '2017/12/25', '2021/06/24', 0.022175, 0.0],
-           ['4.0Y', '2017/12/25', '2021/12/24', '0.02248', 0.0],
-           ['4.5Y', '2017/12/25', '2022/06/24', 0.022715, 0.0],
-           ['5.0Y', '2017/12/25', '2022/12/24', '0.02295', 0.0],
-           ['5.5Y', '2017/12/25', '2023/06/24', 0.02316, 0.0],
-           ['6.0Y', '2017/12/25', '2023/12/24', '0.02337', 0.0],
-           ['6.5Y', '2017/12/25', '2024/06/23', 0.023565, 0.0],
-           ['7.0Y', '2017/12/25', '2024/12/23', '0.02376', 0.0],
-           ['7.5Y', '2017/12/25', '2025/06/23', 0.023934999999999998, 0.0],
-           ['8.0Y', '2017/12/25', '2025/12/23', '0.02411', 0.0],
-           ['8.5Y', '2017/12/25', '2026/06/23', 0.024274999999999998, 0.0],
-           ['9.0Y', '2017/12/25', '2026/12/23', '0.02444', 0.0],
-           ['9.5Y', '2017/12/25', '2027/06/23', 0.024595, 0.0],
-           ['10.0Y', '2017/12/25', '2027/12/23', '0.02475', 0.0],
-           ['10.5Y', '2017/12/25', '2028/06/22', 0.024857, 0.0],
-           ['11.0Y', '2017/12/25', '2028/12/22', 0.024964, 0.0],
-           ['11.5Y', '2017/12/25', '2029/06/22', 0.025071, 0.0],
-           ['12.0Y', '2017/12/25', '2029/12/22', 0.025178, 0.0],
-           ['12.5Y', '2017/12/25', '2030/06/22', 0.025285000000000002, 0.0],
-           ['13.0Y', '2017/12/25', '2030/12/22', 0.025392, 0.0],
-           ['13.5Y', '2017/12/25', '2031/06/22', 0.025499, 0.0],
-           ['14.0Y', '2017/12/25', '2031/12/22', 0.025606, 0.0],
-           ['14.5Y', '2017/12/25', '2032/06/21', 0.025713, 0.0],
-           ['15.0Y', '2017/12/25', '2032/12/21', '0.02582', 0.0],
-           ['15.5Y', '2017/12/25', '2033/06/21', 0.02587, 0.0],
-           ['16.0Y', '2017/12/25', '2033/12/21', 0.02592, 0.0],
-           ['16.5Y', '2017/12/25', '2034/06/21', 0.02597, 0.0],
-           ['17.0Y', '2017/12/25', '2034/12/21', 0.026019999999999998, 0.0],
-           ['17.5Y', '2017/12/25', '2035/06/21', 0.02607, 0.0],
-           ['18.0Y', '2017/12/25', '2035/12/21', 0.02612, 0.0],
-           ['18.5Y', '2017/12/25', '2036/06/20', 0.02617, 0.0],
-           ['19.0Y', '2017/12/25', '2036/12/20', 0.02622, 0.0],
-           ['19.5Y', '2017/12/25', '2037/06/20', 0.026269999999999998, 0.0],
-           ['20.0Y', '2017/12/25', '2037/12/20', '0.02632', 0.0],
-           ['20.5Y', '2017/12/25', '2038/06/20', 0.026327, 0.0],
-           ['21.0Y', '2017/12/25', '2038/12/20', 0.026334, 0.0],
-           ['21.5Y', '2017/12/25', '2039/06/20', 0.026341, 0.0],
-           ['22.0Y', '2017/12/25', '2039/12/20', 0.026348, 0.0],
-           ['22.5Y', '2017/12/25', '2040/06/19', 0.026355, 0.0],
-           ['23.0Y', '2017/12/25', '2040/12/19', 0.026362, 0.0],
-           ['23.5Y', '2017/12/25', '2041/06/19', 0.026369, 0.0],
-           ['24.0Y', '2017/12/25', '2041/12/19', 0.026376, 0.0],
-           ['24.5Y', '2017/12/25', '2042/06/19', 0.026383, 0.0],
-           ['25.0Y', '2017/12/25', '2042/12/19', 0.02639, 0.0],
-           ['25.5Y', '2017/12/25', '2043/06/19', 0.026397, 0.0],
-           ['26.0Y', '2017/12/25', '2043/12/19', 0.026404, 0.0],
-           ['26.5Y', '2017/12/25', '2044/06/18', 0.026411, 0.0],
-           ['27.0Y', '2017/12/25', '2044/12/18', 0.026418, 0.0],
-           ['27.5Y', '2017/12/25', '2045/06/18', 0.026425, 0.0],
-           ['28.0Y', '2017/12/25', '2045/12/18', 0.026432, 0.0],
-           ['28.5Y', '2017/12/25', '2046/06/18', 0.026439, 0.0],
-           ['29.0Y', '2017/12/25', '2046/12/18', 0.026446, 0.0],
-           ['29.5Y', '2017/12/25', '2047/06/18', 0.026453, 0.0],
-           ['30.0Y', '2017/12/25', '2047/12/18', '0.02646', 0.0]]
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}207}]:} \PY{n}{get\PYZus{}interpolated\PYZus{}swap\PYZus{}rate\PYZus{}list}\PY{p}{(}\PY{n}{swap\PYZus{}rate\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}207}]:} [['1.0Y', '2017/12/25', '2018/12/25', '0.01904'],
-           ['1.5Y', '2017/12/25', '2019/06/25', 0.019950000000000002],
-           ['2.0Y', '2017/12/25', '2019/12/25', '0.02086'],
-           ['2.5Y', '2017/12/25', '2020/06/24', 0.021365000000000002],
-           ['3.0Y', '2017/12/25', '2020/12/24', '0.02187'],
-           ['3.5Y', '2017/12/25', '2021/06/24', 0.022175],
-           ['4.0Y', '2017/12/25', '2021/12/24', '0.02248'],
-           ['4.5Y', '2017/12/25', '2022/06/24', 0.022715],
-           ['5.0Y', '2017/12/25', '2022/12/24', '0.02295'],
-           ['5.5Y', '2017/12/25', '2023/06/24', 0.02316],
-           ['6.0Y', '2017/12/25', '2023/12/24', '0.02337'],
-           ['6.5Y', '2017/12/25', '2024/06/23', 0.023565],
-           ['7.0Y', '2017/12/25', '2024/12/23', '0.02376'],
-           ['7.5Y', '2017/12/25', '2025/06/23', 0.023934999999999998],
-           ['8.0Y', '2017/12/25', '2025/12/23', '0.02411'],
-           ['8.5Y', '2017/12/25', '2026/06/23', 0.024274999999999998],
-           ['9.0Y', '2017/12/25', '2026/12/23', '0.02444'],
-           ['9.5Y', '2017/12/25', '2027/06/23', 0.024595],
-           ['10.0Y', '2017/12/25', '2027/12/23', '0.02475'],
-           ['10.5Y', '2017/12/25', '2028/06/22', 0.024857],
-           ['11.0Y', '2017/12/25', '2028/12/22', 0.024964],
-           ['11.5Y', '2017/12/25', '2029/06/22', 0.025071],
-           ['12.0Y', '2017/12/25', '2029/12/22', 0.025178],
-           ['12.5Y', '2017/12/25', '2030/06/22', 0.025285000000000002],
-           ['13.0Y', '2017/12/25', '2030/12/22', 0.025392],
-           ['13.5Y', '2017/12/25', '2031/06/22', 0.025499],
-           ['14.0Y', '2017/12/25', '2031/12/22', 0.025606],
-           ['14.5Y', '2017/12/25', '2032/06/21', 0.025713],
-           ['15.0Y', '2017/12/25', '2032/12/21', '0.02582'],
-           ['15.5Y', '2017/12/25', '2033/06/21', 0.02587],
-           ['16.0Y', '2017/12/25', '2033/12/21', 0.02592],
-           ['16.5Y', '2017/12/25', '2034/06/21', 0.02597],
-           ['17.0Y', '2017/12/25', '2034/12/21', 0.026019999999999998],
-           ['17.5Y', '2017/12/25', '2035/06/21', 0.02607],
-           ['18.0Y', '2017/12/25', '2035/12/21', 0.02612],
-           ['18.5Y', '2017/12/25', '2036/06/20', 0.02617],
-           ['19.0Y', '2017/12/25', '2036/12/20', 0.02622],
-           ['19.5Y', '2017/12/25', '2037/06/20', 0.026269999999999998],
-           ['20.0Y', '2017/12/25', '2037/12/20', '0.02632'],
-           ['20.5Y', '2017/12/25', '2038/06/20', 0.026327],
-           ['21.0Y', '2017/12/25', '2038/12/20', 0.026334],
-           ['21.5Y', '2017/12/25', '2039/06/20', 0.026341],
-           ['22.0Y', '2017/12/25', '2039/12/20', 0.026348],
-           ['22.5Y', '2017/12/25', '2040/06/19', 0.026355],
-           ['23.0Y', '2017/12/25', '2040/12/19', 0.026362],
-           ['23.5Y', '2017/12/25', '2041/06/19', 0.026369],
-           ['24.0Y', '2017/12/25', '2041/12/19', 0.026376],
-           ['24.5Y', '2017/12/25', '2042/06/19', 0.026383],
-           ['25.0Y', '2017/12/25', '2042/12/19', 0.02639],
-           ['25.5Y', '2017/12/25', '2043/06/19', 0.026397],
-           ['26.0Y', '2017/12/25', '2043/12/19', 0.026404],
-           ['26.5Y', '2017/12/25', '2044/06/18', 0.026411],
-           ['27.0Y', '2017/12/25', '2044/12/18', 0.026418],
-           ['27.5Y', '2017/12/25', '2045/06/18', 0.026425],
-           ['28.0Y', '2017/12/25', '2045/12/18', 0.026432],
-           ['28.5Y', '2017/12/25', '2046/06/18', 0.026439],
-           ['29.0Y', '2017/12/25', '2046/12/18', 0.026446],
-           ['29.5Y', '2017/12/25', '2047/06/18', 0.026453],
-           ['30.0Y', '2017/12/25', '2047/12/18', '0.02646']]
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}250}]:} \PY{n}{swap\PYZus{}rate\PYZus{}list}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}250}]:} [['1.0Y', '2017/12/25', '2018/12/25', '0.01904'],
-           ['2.0Y', '2017/12/25', '2019/12/25', '0.02086'],
-           ['3.0Y', '2017/12/25', '2020/12/24', '0.02187'],
-           ['4.0Y', '2017/12/25', '2021/12/24', '0.02248'],
-           ['5.0Y', '2017/12/25', '2022/12/24', '0.02295'],
-           ['6.0Y', '2017/12/25', '2023/12/24', '0.02337'],
-           ['7.0Y', '2017/12/25', '2024/12/23', '0.02376'],
-           ['8.0Y', '2017/12/25', '2025/12/23', '0.02411'],
-           ['9.0Y', '2017/12/25', '2026/12/23', '0.02444'],
-           ['10.0Y', '2017/12/25', '2027/12/23', '0.02475'],
-           ['15.0Y', '2017/12/25', '2032/12/21', '0.02582'],
-           ['20.0Y', '2017/12/25', '2037/12/20', '0.02632'],
-           ['30.0Y', '2017/12/25', '2047/12/18', '0.02646']]
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}195}]:} \PY{n}{a} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{]}
-          \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
-              \PY{n}{a}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
-          \PY{n}{a}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}195}]:} [[1, 2, 0], [3, 4, 0]]
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}60}]:} \PY{k+kn}{import} \PY{n+nn}{datetime}
-         \PY{n}{now} \PY{o}{=} \PY{n}{datetime}\PY{o}{.}\PY{n}{datetime}\PY{o}{.}\PY{n}{today}\PY{p}{(}\PY{p}{)}
-         \PY{n}{d} \PY{o}{=} \PY{n}{now} \PY{o}{+} \PY{n}{datetime}\PY{o}{.}\PY{n}{timedelta}\PY{p}{(}\PY{n}{days}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{)}
-         \PY{n}{d}\PY{o}{.}\PY{n}{strftime}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{Y/}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{m/}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}60}]:} '2018/01/30'
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}62}]:} \PY{n}{x} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{]}\PY{p}{)}
-         \PY{n}{y} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{20}\PY{p}{,}\PY{l+m+mi}{20}\PY{p}{,}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
-         \PY{n}{f} \PY{o}{=} \PY{n}{interp1d}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{y}\PY{p}{)}
-\end{Verbatim}
-
-
     \begin{Verbatim}[commandchars=\\\{\}]
 {\color{incolor}In [{\color{incolor}63}]:} \PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{interpolate} \PY{k}{import} \PY{n}{interp1d}
          \PY{n}{x} \PY{o}{=} \PY{p}{[}\PY{p}{]}
@@ -2066,10 +1851,10 @@ discount factors gradually is called Bootstrap method.
 {\color{outcolor}Out[{\color{outcolor}63}]:} array(0.019950000000000002)
 \end{Verbatim}
             
-%    \begin{center}
-%    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Swap_Pricing_files/Swap_Pricing_23_2.png}
-%    \end{center}
-%    { \hspace*{\fill} \\}
+    % \begin{center}
+    % \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Swap_Pricing_files/Swap_Pricing_14_2.png}
+    % \end{center}
+    % { \hspace*{\fill} \\}
     
     \subsubsection{エラーメッセージ}\label{ux30a8ux30e9ux30fcux30e1ux30c3ux30bbux30fcux30b8}
 
