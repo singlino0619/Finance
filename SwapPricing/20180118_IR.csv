@@ -1,20 +1,20 @@
-tenor,market,CCY,rate,roll
-O/N,Money Market,USD,0.014375,
-1W,Money Market,USD,0.0146533,
-1M,Money Market,USD,0.0156118,
-2M,Money Market,USD,0.0163482,
-3M,Money Market,USD,0.017447,
-6M,Money Market,USD,0.019255,
-1Y,Swap,USD,0.02045,6M
-2Y,Swap,USD,0.02257,6M
-3Y,Swap,USD,0.02366,6M
-4Y,Swap,USD,0.02427,6M
-5Y,Swap,USD,0.02468,6M
-6Y,Swap,USD,0.02504,6M
-7Y,Swap,USD,0.02536,6M
-8Y,Swap,USD,0.02565,6M
-9Y,Swap,USD,0.02591,6M
-10Y,Swap,USD,0.02615,6M
-15Y,Swap,USD,0.0269,6M
-20Y,Swap,USD,0.02722,6M
-30Y,Swap,USD,0.02715,6M
+tenor,market,CCY,rate,roll,convention
+O/N,Money Market,USD,0.014375,,act/365
+1W,Money Market,USD,0.0146533,,act/365
+1M,Money Market,USD,0.0156118,,act/365
+2M,Money Market,USD,0.0163482,,act/365
+3M,Money Market,USD,0.017447,,act/365
+6M,Money Market,USD,0.019255,,act/365
+1Y,Money Market,USD,0.02045,6M,act/365
+2Y,Swap,USD,0.02257,6M,act/365
+3Y,Swap,USD,0.02366,6M,act/365
+4Y,Swap,USD,0.02427,6M,act/365
+5Y,Swap,USD,0.02468,6M,act/365
+6Y,Swap,USD,0.02504,6M,act/365
+7Y,Swap,USD,0.02536,6M,act/365
+8Y,Swap,USD,0.02565,6M,act/365
+9Y,Swap,USD,0.02591,6M,act/365
+10Y,Swap,USD,0.02615,6M,act/365
+15Y,Swap,USD,0.0269,6M,act/365
+20Y,Swap,USD,0.02722,6M,act/365
+30Y,Swap,USD,0.02715,6M,act/365
