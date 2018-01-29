@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[210]:
+# In[95]:
 
 
 import csv
@@ -52,25 +52,24 @@ def calc_trade_days(start_day, end_day):
     return (datetime_obj_end - datetime_obj_start).days
 
 class discount_factor:
-    def __init__(self, ir_list_name):
+    def __init__(self, ir_list_name, ccy):
         ## コンストラクタの順番に注意．　先に_ir_listを定義し， _load_ir_listの中で_base_dateを定義した関数(今回は_add_cash_flow())
         ## を呼び出すと， _base_dateがまだ定義されていないのでエラーがでる．
-        print("call constructor")
         # base_date -> trade_date??
         self._base_date = ir_list_name[0:4] + '/' + ir_list_name[4:6] + '/' + ir_list_name[6:8]
         # spot dateを２営業日後としている.
         self._spot_date = self._calc_end_date(self._base_date, '2.0D')
-        self._ir_list = self._load_ir_list(ir_list_name)
+        self._ir_list = self._set_ir_list(ir_list_name, ccy)
         self._roll_month = float(self._ir_list[-1][4][0])
         self._str_roll_month = str(self._roll_month) + 'M'
         self._convention = int(self._ir_list[0][5][-3:])
         self._str_convention = self._ir_list[0][5]
         self._string_swap = self._ir_list[-1][1]
         self._string_mm = self._ir_list[0][1]
-        self._ccy = self._ir_list[0][2] 
+        self._ccy = self._ir_list[0][2]
 #        self._ir_list_DF_mm = self._calc_DF_money_market()
-    
-    def _load_ir_list(self, ir_list_name):
+
+    def _csv_read_ir_list(self, ir_list_name):
         with open(ir_list_name, 'r') as csvfile:
             reader_obj = csv.reader(csvfile)
             # rewritten header_obj by using next method(???)
@@ -78,16 +77,36 @@ class discount_factor:
             ir_list = []
             for row in reader_obj:
                 ir_list.append(row)
-            temp_num = [[] for i in range(len(ir_list))] # comprehension expression for making null list.
-            for i in range(len(ir_list)):
-                if (ir_list[i][0][0].isdigit()):
-                    num_tenor = ir_list[i][0][0: len(ir_list[i][0])-1]
-                    unit_tenor = ir_list[i][0][-1]
-                    temp_num[i] = "{:.1f}".format(int(num_tenor))
-                    ir_list[i][0] = temp_num[i] + unit_tenor
+            return ir_list
+
+    def _set_ir_list(self, ir_list_name, ccy):
+        ir_list = self._select_ccy_ir_list(ir_list_name, ccy)
+        # change int type to float type (ex. 1Y -> 1.0Y)
+        temp_num = [[] for i in range(len(ir_list))] # comprehension expression for making null list.
+        for i in range(len(ir_list)):
+            if (ir_list[i][0][0].isdigit()):
+                num_tenor = ir_list[i][0][0: len(ir_list[i][0])-1]
+                unit_tenor = ir_list[i][0][-1]
+                temp_num[i] = "{:.1f}".format(int(num_tenor))
+                ir_list[i][0] = temp_num[i] + unit_tenor
         ir_list_with_cf = self._add_cash_flow(ir_list)
-        return ir_list_with_cf
-    
+        return ir_list_with_cf 
+ 
+    def _select_ccy_ir_list(self, ir_list_name, ccy):
+        ir_list = self._csv_read_ir_list(ir_list_name)
+        indices_selected_ccy = self._select_ccy(ir_list, ccy)
+        first_index_selected_ccy = indices_selected_ccy[0]
+        last_index_selected_ccy = indices_selected_ccy[-1] + 1
+        selected_ccy_ir_list = []
+        for i in range(first_index_selected_ccy, last_index_selected_ccy):
+            selected_ccy_ir_list.append(ir_list[i])
+        return selected_ccy_ir_list
+        
+    def _select_ccy(self, ir_list, ccy):
+        extract_ccy_list = extract_1d_list(ir_list, 2)
+        indices_ccy = [i for i, ccy_name in enumerate(extract_ccy_list) if (ccy_name == ccy) ]
+        return indices_ccy
+           
     def _add_cash_flow(self, ir_list):
         obj_trade_date = datetime.datetime.strptime(self._base_date, '%Y/%m/%d')
         over_night_date = (obj_trade_date + datetime.timedelta(days=1)).strftime('%Y/%m/%d')
@@ -143,23 +162,32 @@ class discount_factor:
         return self._roll_month
     
     def get_ir_list_with_DF_money_market(self):
-        ir_list_DF_mm = self._calc_DF_money_market(self._ir_list)
-#        return self._ir_list_DF_mm
+        ir_list_DF_mm = self._calc_DF_money_market()
         return ir_list_DF_mm
 
     def get_ir_list_with_DF_swap_rate(self):
         ir_list_DF_sr = self._calc_DF_swap_rate()
         return ir_list_DF_sr
+    
+    def get_ir_list_interpolated_swap_rate(self):
+        ir_list_interpolated_swap_rate = self._interpolated_ir_list_for_bootstrap()
+        return ir_list_interpolated_swap_rate
+    
+    def get_ir_list_interpolated_DF_money_market(self):
+        f_interpolation_DF_mm = self.interpolate_DF_money_market()
+        return f_interpolation_DF_mm
 
     def _calc_DF_money_market(self):
         len_MM = 0
-        for i in range(len(ir_list)):
-            if (ir_list[i][1] == 'Money Market'):
+        for i in range(len(self._ir_list)):
+            if (self._ir_list[i][1] == 'Money Market'):
                 len_MM += 1
         ir_list_DF_money_market = [['','','','','','','','',''] for i in range(len(self._ir_list))]
         temp_discount_factor = np.zeros(len_MM)
         extract_date_list = extract_1d_list(self._ir_list, 0)
-        len_original = len(self._ir_list[0])
+        len_ir_list = len(self._ir_list)
+        len_one_list_with_DF = len(ir_list_DF_money_market[0])
+        index_DF  = len_one_list_with_DF - 1
         
         for i in range(len_MM):
             TN_flag = self._ir_list[i][0] in 'T/N'
@@ -176,11 +204,13 @@ class discount_factor:
                 temp_discount_factor[i] = temp_discount_factor[index_TN]                                                             / (1.0 + self._calc_day_count_fraction(self._ir_list[i][6], self._ir_list[i][7]) * float(self._ir_list[i][3]))
                     
             for i in range(len_MM):
-                for j in range(len_original ):
+                for j in range(len_one_list_with_DF - 1):
+                    ir_list_DF_money_market[i][j] =self._ir_list[i][j]
+                ir_list_DF_money_market[i][index_DF] = temp_discount_factor[i]
+            for i in range(len_MM, len_ir_list):
+                for j in range(len_one_list_with_DF - 1):
                     ir_list_DF_money_market[i][j] = self._ir_list[i][j]
-                    ir_list_DF_money_market[i][len_original] = temp_discount_factor[i]
-            for i in range(len_MM, len(ir_list)):
-                ir_list_DF_money_market[i] = self._ir_list[i]
+                ir_list_DF_money_market[i][index_DF] = 0.0
             
         elif (TN_flag == False):
             # 0/N
@@ -191,13 +221,62 @@ class discount_factor:
                 temp_discount_factor[i] = temp_discount_factor[index_ON] * temp_discount_factor[index_ON]                                                              / (1.0 + self._calc_day_count_fraction(self._ir_list[i][6], self._ir_list[i][7]) * float(self._ir_list[i][3]))
                     
             for i in range(len_MM):
-                for j in range(len_original):
+                for j in range(len_one_list_with_DF - 1):
                     ir_list_DF_money_market[i][j] =self._ir_list[i][j]
-                    ir_list_DF_money_market[i][len_original] = temp_discount_factor[i]
-            for i in range(len_MM, len(ir_list)):
-                ir_list_DF_money_market[i] = self._ir_list[i]
+                ir_list_DF_money_market[i][index_DF] = temp_discount_factor[i]
+            for i in range(len_MM, len_ir_list):
+                for j in range(len_one_list_with_DF - 1):
+                    ir_list_DF_money_market[i][j] = self._ir_list[i][j]
+                ir_list_DF_money_market[i][index_DF] = 0.0
             
         return ir_list_DF_money_market
+    
+    def interpolate_DF_money_market(self):
+        ir_list_DF_money_market = self._calc_DF_money_market()
+        extract_date_list = extract_1d_list(ir_list_DF_money_market, 0)
+        extract_DF_list = extract_1d_list(ir_list_DF_money_market, 8)
+        index_1m = extract_date_list.index('1.0M')
+        index_1y = extract_date_list.index('1.0Y')
+        extract_date_list_mm_tenor = extract_date_list[index_1m : index_1y + 1]
+        extract_date_list_mm_tenor[-1] = '12.0M'
+        for i in range(len(extract_date_list_mm_tenor)):
+            extract_date_list_mm_tenor[i] = float(extract_date_list_mm_tenor[i][0:-3])
+        extract_DF_list_mm_tenor = extract_DF_list[index_1m : index_1y + 1]
+        f_interpolated_DF_money_market = interp1d(extract_date_list_mm_tenor, extract_DF_list_mm_tenor)
+        return f_interpolated_DF_money_market
+
+    def interpolated_ir_list_DF_money_market(self):
+        ir_list_DF_mm = self._calc_DF_money_market()
+        extract_date_list = extract_1d_list(ir_list_DF_mm, 0)
+        len_one_list_with_DF = len(ir_list_DF_mm[0])
+        len_ir_list = len(ir_list_DF_mm)
+        index_1m = extract_date_list.index('1.0M')
+        index_1y = extract_date_list.index('1.0Y')
+        len_1m = index_1m +1
+        len_1y = index_1y + 1
+        len_interpolated_ir_list_DF_mm = (len_1m - 1) + 12 + (len_ir_list - len_1y)
+        interpolated_ir_list_DF_mm = [['', '', '', '', '', '', '', '', ''] for i in range(len_interpolated_ir_list_DF_mm)]
+        f_interpolated_DF_money_market = self.interpolate_DF_money_market()
+        # 1.0Mの前までコピー
+        for i in range(0, len_1m - 1):
+            for j in range(len_one_list_with_DF):
+                interpolated_ir_list_DF_mm[i][j] = ir_list_DF_mm[i][j]
+        # 1.0M 12.0MまでDFを補完
+        for i in range(len_1m - 1, len_1m - 1 + 12 - 1):
+            interpolated_ir_list_DF_mm[i][0] = "{}M".format(float((i - (len_1m - 1) + 1)))
+        for i in range(len_1m - 1, len_1m - 1 + 12 - 1):
+            interpolated_ir_list_DF_mm[i][1] = ir_list_DF_mm[i][1]
+            interpolated_ir_list_DF_mm[i][2] = ir_list_DF_mm[i][2]
+            interpolated_ir_list_DF_mm[i][3] = ''
+            interpolated_ir_list_DF_mm[i][4] = ir_list_DF_mm[i][4]
+            interpolated_ir_list_DF_mm[i][5] = ir_list_DF_mm[i][5]
+            interpolated_ir_list_DF_mm[i][6] = self._spot_date
+            interpolated_ir_list_DF_mm[i][7] = self._calc_end_date(self._spot_date, interpolated_ir_list_DF_mm[i][0])
+            interpolated_ir_list_DF_mm[i][8] = float(f_interpolated_DF_money_market(float(interpolated_ir_list_DF_mm[i][0][0:-1])))
+        for i in range( len_1m - 1 + 12 - 1 , len_interpolated_ir_list_DF_mm):
+            for j in range(len_one_list_with_DF):
+                interpolated_ir_list_DF_mm[i][j] = ir_list_DF_mm[i - index_1y -1][j]
+        return interpolated_ir_list_DF_mm
     
     def _interpolate_swap_rate(self):
         extract_date_list = extract_1d_list(self._ir_list, 0)
@@ -211,15 +290,17 @@ class discount_factor:
         return f_interpolated_swap_rate
     
     def _interpolated_ir_list_for_bootstrap(self):
-        extract_date_list = extract_1d_list(self._ir_list, 0)
+        ir_list_for_bootstrap = self.interpolated_ir_list_DF_money_market()
+        extract_date_list = extract_1d_list(ir_list_for_bootstrap, 0)
+        # 
         index_1y = extract_date_list.index('1.0Y')
+        len_index_1y = index_1y + 1
         f_interpolated_swap_rate = self._interpolate_swap_rate()
-        ir_list_for_bootstrap = self._calc_DF_money_market()
         max_maturity_in_unit_month = calc_month(ir_list_for_bootstrap[-1][0]) 
-        seq_len_for_bootstrap = int(max_maturity_in_unit_month / self._roll_month - 1)
+        seq_len_for_bootstrap = int( ((max_maturity_in_unit_month) - 12.0)  / self._roll_month) + 1
         seq_for_bootstrap = [['', '', '', '', '', '', '', '', ''] for i in range(seq_len_for_bootstrap + index_1y)]
         # base_tenor はスワップレートのテナーでもっとも短いテナーという気持ち
-        base_tenor = int(float(self._ir_list[index_1y][0][0:-1]) * 12.0)  # change unit: year to month
+        base_tenor = int(float(ir_list_for_bootstrap[index_1y][0][0:-1]) * 12.0)  # change unit: year to month
         for i in range(index_1y , seq_len_for_bootstrap + index_1y):
             seq_for_bootstrap[i][0] = "{}M".format(base_tenor + (i - index_1y)  * self._roll_month)
         for i in range(index_1y):
@@ -254,7 +335,7 @@ class discount_factor:
         index_roll_tenor = extract_date_list.index(self._str_roll_month)
         index_start_tenor = index_1y + 1
         index_end_tenor = len(interpolated_ir_list)
-        day_count_fraction = self._calc_day_count_fraction(ir_list[index_roll_tenor][6],  ir_list[index_roll_tenor][7])
+        day_count_fraction = self._calc_day_count_fraction(self._ir_list[index_roll_tenor][6],  self._ir_list[index_roll_tenor][7])
         DF_swap_rate = np.zeros(len(interpolated_ir_list))
         for i in range(index_start_tenor, index_end_tenor):
             annuity = self._calc_annuity(interpolated_ir_list, interpolated_ir_list[i][0])
@@ -325,50 +406,67 @@ class discount_factor:
         return interpolated_DF_list
 
 
-# In[211]:
+# In[103]:
 
 
-usd_IR_obj = discount_factor('20180118_IR.csv')
-ir_list = usd_IR_obj.get_ir_list()
-#usd_IR_obj .calc_DF_money_market()
-#interpolated_swap_rate_list = usd_IR_obj.interpolated_ir_list_for_bootstrap()
-#interpolated_swap_rate_list
-#usd_IR_obj.calc_DF_swap_rate()
-#usd_IR_obj.calc_annuity(interpolated_swap_rate_list, interpolated_swap_rate_list[7][0])
-#DFlist = usd_IR_obj.get_ir_list_with_DF_swap_rate()
-#DFlist
-#f = usd_IR_obj.interpolate_DF()
-#f(10802)
-usd_IR_obj.get_DF('2018/01/30')
-DF_list = usd_IR_obj.get_DF_list()
+jpy_IR_obj = discount_factor('20180118_IR_data.csv', 'JPY')
+ir_list_jpy = jpy_IR_obj.get_ir_list()
+ir_list_jpy
+DF_list_jpy = jpy_IR_obj.get_DF_list()
+usd_IR_obj = discount_factor('20180118_IR_data.csv', 'USD')
+ir_list_usd = usd_IR_obj.get_ir_list()
+ir_list_usd
+DF_list_usd = usd_IR_obj.get_DF_list()
+#jpy_IR_obj.interpolated_ir_list_DF_money_market()
+#jpy_IR_obj.get_ir_list_with_DF_swap_rate()
+#jpy_IR_obj.get_ir_list_interpolated_swap_rate()
+#f = jpy_IR_obj.interpolate_swap_rate()
+#f(12)
 
 
-# In[207]:
+# In[104]:
 
 
 import csv
 
-with open('DF.csv', 'w') as f:
+with open('DF_list_jpy.csv', 'w') as f:
     writer = csv.writer(f, lineterminator='\n') # 改行コード（\n）を指定しておく
-    writer.writerows(DF_list) # 2次元配列も書き込める
+    writer.writerows(DF_list_jpy) # 2次元配列も書き込める
 
 
-# In[121]:
+# In[18]:
 
 
-array(0.4484070693339933)
+test_L = [500,0,0,0,0,0,0,500,200]
+index_num = [n for n, v in enumerate(test_L) if v == 500]
+print(index_num)
 
 
-# In[5]:
+# In[21]:
 
 
-usd_IR_obj.interpolated_ir_list_for_bootstrap()
+index_num = [i for i, v in enumerate(test_L) if v ==]
+index_num
 
 
-# In[189]:
+# In[6]:
 
 
-365 * 1
+usd_IR_obj.get_ir_list_with_DF_swap_rate()
+
+
+# In[63]:
+
+
+a = [[1,2], [2,3]]
+b = [[3,4], [25,36]]
+a + b
+
+
+# In[81]:
+
+
+29 * 12 / 3 
 
 
 # In[327]:
@@ -462,6 +560,12 @@ a = [0, 1, 2, 3, 4, 5, 6]
 ind = a.index(6)
 for i in range(ind):
     print(i)
+
+
+# In[66]:
+
+
+119 * 3
 
 
 # In[28]:
@@ -571,4 +675,63 @@ def calc_DF_money_market(self):
                 ir_list_DF_money_market[i] = self._ir_list[i]
             
         return ir_list_DF_money_market
+
+
+# ## 1/28 バックアップ置き場
+# - ver1.1 ccyを選べるようにする
+
+# In[ ]:
+
+
+def _load_ir_list(self, ir_list_name):
+    with open(ir_list_name, 'r') as csvfile:
+        reader_obj = csv.reader(csvfile)
+        # rewritten header_obj by using next method(???)
+        header_obj = next(reader_obj)
+        ir_list = []
+        for row in reader_obj:
+            ir_list.append(row)
+        # change int type to float type (ex. 1Y -> 1.0Y)
+        temp_num = [[] for i in range(len(ir_list))] # comprehension expression for making null list.
+        for i in range(len(ir_list)):
+            if (ir_list[i][0][0].isdigit()):
+                num_tenor = ir_list[i][0][0: len(ir_list[i][0])-1]
+                unit_tenor = ir_list[i][0][-1]
+                temp_num[i] = "{:.1f}".format(int(num_tenor))
+                ir_list[i][0] = temp_num[i] + unit_tenor
+    ir_list_with_cf = self._add_cash_flow(ir_list)
+    return ir_list_with_cf
+
+def interpolated_ir_list_DF_money_market(self):
+    ir_list_DF_mm = self._calc_DF_money_market()
+    extract_date_list = extract_1d_list(ir_list_DF_mm, 0)
+    len_one_list_with_DF = len(ir_list_DF_mm[0])
+    len_ir_list = len(ir_list_DF_mm)
+    index_1m = extract_date_list.index('1.0M')
+    index_1y = extract_date_list.index('1.0Y')
+    len_1m = index_1m +1
+    len_1y = index_1y + 1
+    len_interpolated_ir_list_DF_mm = (len_1m - 1) + 12 + (len_ir_list - len_1y)
+    interpolated_ir_list_DF_mm = [['', '', '', '', '', '', '', '', ''] for i in range(len_interpolated_ir_list_DF_mm)]
+    f_interpolated_DF_money_market = self.interpolate_DF_money_market()
+    # 1.0Mの前までコピー
+    for i in range(0, len_1m - 1):
+        for j in range(len_one_list_with_DF):
+            interpolated_ir_list_DF_mm[i][j] = ir_list_DF_mm[i][j]
+    # 1.0M 12.0MまでDFを補完
+    for i in range(len_1m - 1, len_1m - 1 + 12):
+        interpolated_ir_list_DF_mm[i][0] = "{}M".format(float((i - (len_1m - 1) + 1)))
+    for i in range(len_1m - 1, len_1m - 1 + 12):
+        interpolated_ir_list_DF_mm[i][1] = ir_list_DF_mm[i][1]
+        interpolated_ir_list_DF_mm[i][2] = ir_list_DF_mm[i][2]
+        interpolated_ir_list_DF_mm[i][3] = ''
+        interpolated_ir_list_DF_mm[i][4] = ir_list_DF_mm[i][4]
+        interpolated_ir_list_DF_mm[i][5] = ir_list_DF_mm[i][5]
+        interpolated_ir_list_DF_mm[i][6] = self._spot_date
+        interpolated_ir_list_DF_mm[i][7] = self._calc_end_date(self._spot_date, interpolated_ir_list_DF_mm[i][0])
+        interpolated_ir_list_DF_mm[i][8] = float(f_interpolated_DF_money_market(float(interpolated_ir_list_DF_mm[i][0][0:-1])))
+    for i in range( len_1m - 1 + 12 , len_interpolated_ir_list_DF_mm):
+        for j in range(len_one_list_with_DF):
+            interpolated_ir_list_DF_mm[i][j] = ir_list_DF_mm[i - index_1y -1][j]
+    return interpolated_ir_list_DF_mm
 
