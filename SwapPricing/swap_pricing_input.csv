@@ -1,2 +1,2 @@
-"ccy_our_pay","fixed_or_float_pay_side","ccy_our_rec","fixed_or_float_rec_side"
-"JPY","FLOAT","JPY","FIXED"
+ccy_our_pay,fixed_or_float_pay_side,ccy_our_rec,fixed_or_float_rec_side,term,valuation_date
+JPY,FLOAT,JPY,FIXED,10Y,2018/1/18
