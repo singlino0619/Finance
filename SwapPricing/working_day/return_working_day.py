@@ -70,3 +70,35 @@ def cash_flow_generator(start_day, tenor, convention):
     end_date = str(year) + '/' + str(month) + '/' + str(day)
     working_end_date = calc_working_day(end_date, convention)
     return working_end_date
+
+def create_end_date(basis_date, tenor, convention, num_cash_flow, lag):
+    end_date_list = ['' for i in range(num_cash_flow+1)]
+    len_list = len(end_date_list)
+    basis_date_obj = datetime.datetime.strptime(basis_date, '%Y/%m/%d')
+    basis_year = basis_date_obj.year
+    basis_month = basis_date_obj.month
+    basis_day = basis_date_obj.day
+    lag_date = basis_date_obj + datetime.timedelta(days=lag)
+    end_date_list[0] = lag_date.strftime('%Y/%m/%d')
+    for i in range(1,  len_list):
+        cumulative_month = basis_month + int(tenor[-2]) * i
+        year, month = divmod(cumulative_month, 12)
+        if (month==0):
+            end_date_month = 12
+        else:
+            end_date_month = month
+        end_date_year = basis_year + year
+        str_end_date = str(end_date_year) + '/' + str(end_date_month) + '/' + str(basis_day)
+        end_date_obj = datetime.datetime.strptime(str_end_date, '%Y/%m/%d')
+        end_date = end_date_obj.strftime('%Y/%m/%d')
+        working_end_date = calc_working_day(end_date, convention)
+        end_date_list[i] = working_end_date
+    return end_date_list
+
+def create_start_date(basis_date, tenor, convention, num_cash_flow, lag):
+    end_date_list = create_end_date(basis_date, tenor, convention, num_cash_flow, lag)
+    start_date_list = ['' for i in range(len(end_date_list))]
+    start_date_list[0] = basis_date
+    for i in range(1, len(end_date_list)):
+        start_date_list[i] = end_date_list[i-1]
+    return start_date_list
