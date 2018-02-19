@@ -2,7 +2,6 @@ import csv
 import datetime
 import numpy as np
 from scipy.interpolate import interp1d
-import sys
 
 def extract_1d_list(nested_list, index):
     extracted_list = []
@@ -47,36 +46,22 @@ def calc_trade_days(start_day, end_day):
     return (datetime_obj_end - datetime_obj_start).days
 
 class discount_factor:
-    def __init__(self, ir_list_name, ccy, base_date):
+    def __init__(self, ir_list_name, ccy):
         ## コンストラクタの順番に注意．　先に_ir_listを定義し， _load_ir_listの中で_base_dateを定義した関数(今回は_add_cash_flow())
         ## を呼び出すと， _base_dateがまだ定義されていないのでエラーがでる．
         # base_date -> trade_date??
+        self._base_date = ir_list_name[0:4] + '/' + ir_list_name[4:6] + '/' + ir_list_name[6:8]
         # spot dateを２営業日後としている.
-        self._column_base_date = 0
-        self._column_tenor = 1
-        self._column_market = 2
-        self._column_ccy = 3
-        self._column_rate = 4
-        self._column_roll = 5
-        self._column_convention = 6
-        self._base_date = datetime.datetime.strptime(base_date, '%Y/%m/%d').strftime('%Y/%m/%d')
         self._spot_date = self._calc_end_date(self._base_date, '2.0D')
         self._ir_list = self._set_ir_list(ir_list_name, ccy)
-        self._roll_month = float(self._ir_list[-1][self._column_roll ][0])
+        self._roll_month = float(self._ir_list[-1][4][0])
         self._str_roll_month = str(self._roll_month) + 'M'
-        self._convention = int(self._ir_list[0][self._column_convention][-3:])
-        self._str_convention = self._ir_list[0][self._column_convention]
-        self._string_swap = self._ir_list[-1][self._column_market]
-        self._string_mm = self._ir_list[0][self._column_market]
-        self._ccy = self._ir_list[0][self._column_ccy]
-        self._column_start_date = 7
-        self._column_end_date = 8
+        self._convention = int(self._ir_list[0][5][-3:])
+        self._str_convention = self._ir_list[0][5]
+        self._string_swap = self._ir_list[-1][1]
+        self._string_mm = self._ir_list[0][1]
+        self._ccy = self._ir_list[0][2]
 #        self._ir_list_DF_mm = self._calc_DF_money_market()
-        if (self._base_date != datetime.datetime.strptime(self._ir_list[0][self._column_base_date], '%Y/%m/%d').strftime('%Y/%m/%d')):
-            print('Enter Correct Base_Date in "A" column of input file.')
-            sys.exit()
-        else:
-            pass
 
     def _csv_read_ir_list(self, ir_list_name):
         with open(ir_list_name, 'r') as csvfile:
@@ -93,11 +78,11 @@ class discount_factor:
         # change int type to float type (ex. 1Y -> 1.0Y)
         temp_num = [[] for i in range(len(ir_list))] # comprehension expression for making null list.
         for i in range(len(ir_list)):
-            if (ir_list[i][self._column_tenor ][0].isdigit()):
-                num_tenor = ir_list[i][self._column_tenor ][0: len(ir_list[i][self._column_tenor ])-1]
-                unit_tenor = ir_list[i][self._column_tenor ][-1]
+            if (ir_list[i][0][0].isdigit()):
+                num_tenor = ir_list[i][0][0: len(ir_list[i][0])-1]
+                unit_tenor = ir_list[i][0][-1]
                 temp_num[i] = "{:.1f}".format(int(num_tenor))
-                ir_list[i][self._column_tenor ] = temp_num[i] + unit_tenor
+                ir_list[i][0] = temp_num[i] + unit_tenor
         ir_list_with_cf = self._add_cash_flow(ir_list)
         return ir_list_with_cf
 
@@ -112,7 +97,7 @@ class discount_factor:
         return selected_ccy_ir_list
 
     def _select_ccy(self, ir_list, ccy):
-        extract_ccy_list = extract_1d_list(ir_list, self._column_ccy)
+        extract_ccy_list = extract_1d_list(ir_list, 2)
         indices_ccy = [i for i, ccy_name in enumerate(extract_ccy_list) if (ccy_name == ccy) ]
         return indices_ccy
 
@@ -121,15 +106,15 @@ class discount_factor:
         over_night_date = (obj_trade_date + datetime.timedelta(days=1)).strftime('%Y/%m/%d')
         spot_date = (obj_trade_date + datetime.timedelta(days=2)).strftime('%Y/%m/%d')
         for i in range(len(ir_list)):
-            if (ir_list[i][self._column_tenor] == 'O/N'):
+            if (ir_list[i][0] == 'O/N'):
                 ir_list[i].append(self._base_date)
                 ir_list[i].append(over_night_date)
-            elif (ir_list[i][self._column_tenor] == 'T/N'):
+            elif (ir_list[i][0] == 'T/N'):
                 ir_list[i].append(over_night_date)
                 ir_list[i].append(spot_date)
             else:
                 ir_list[i].append(spot_date)
-                ir_list[i].append(self._calc_end_date(spot_date, ir_list[i][self._column_tenor]))
+                ir_list[i].append(self._calc_end_date(spot_date, ir_list[i][0]))
         return ir_list
 
     def _calc_end_date(self, start_day, str_maturity):
@@ -187,66 +172,61 @@ class discount_factor:
         return f_interpolation_DF_mm
 
     def _calc_DF_money_market(self):
-        col_tenor = self._column_tenor
-        col_sd = self._column_start_date
-        col_ed = self._column_end_date
-        col_rate = self._column_rate
         len_MM = 0
         for i in range(len(self._ir_list)):
-            if (self._ir_list[i][self._column_market] == 'Money Market'):
+            if (self._ir_list[i][1] == 'Money Market'):
                 len_MM += 1
         ir_list_DF_money_market = [['','','','','','','','',''] for i in range(len(self._ir_list))]
         temp_discount_factor = np.zeros(len_MM)
-        extract_date_list = extract_1d_list(self._ir_list, col_tenor)
+        extract_date_list = extract_1d_list(self._ir_list, 0)
         len_ir_list = len(self._ir_list)
         len_one_list_with_DF = len(ir_list_DF_money_market[0])
         index_DF  = len_one_list_with_DF - 1
+
         for i in range(len_MM):
-            TN_flag = self._ir_list[i][col_tenor] in 'T/N'
+            TN_flag = self._ir_list[i][0] in 'T/N'
 
         if (TN_flag == True):
             # 0/N
             index_ON = extract_date_list.index('O/N')
-            temp_discount_factor[index_ON] = 1.0 / (1.0 + self._calc_day_count_fraction(self._ir_list[index_ON][col_sd], \
-                                                                                        self._ir_list[index_ON][col_ed]) * float(self._ir_list[index_ON][col_rate]))
+            temp_discount_factor[index_ON] = 1.0 / (1.0 + self._calc_day_count_fraction(self._ir_list[index_ON][6], self._ir_list[index_ON][7]) \
+                                            * float(self._ir_list[index_ON][3]))
             # T/N
             index_TN = extract_date_list.index('T/N')
-            temp_discount_factor[index_TN] = temp_discount_factor[index_ON] / \
-                                                                            (1.0 + self._calc_day_count_fraction(self._ir_list[index_TN][col_sd], self._ir_list[index_TN][col_ed]) \
-                                                                             * float(self._ir_list[index_TN][col_rate]))
+            temp_discount_factor[index_TN] = temp_discount_factor[index_ON] \
+                                            / (1.0 + self._calc_day_count_fraction(self._ir_list[index_TN][6], self._ir_list[index_TN][7]) \
+                                            * float(self._ir_list[index_TN][3]))
             # libor
             for i in range(2, len_MM):
                 temp_discount_factor[i] = temp_discount_factor[index_TN] \
-                                                            / (1.0 + self._calc_day_count_fraction(self._ir_list[i][col_sd], self._ir_list[i][col_ed]) * float(self._ir_list[i][col_rate]))
+                                        / (1.0 + self._calc_day_count_fraction(self._ir_list[i][6], self._ir_list[i][7]) * float(self._ir_list[i][3]))
 
             for i in range(len_MM):
                 for j in range(len_one_list_with_DF - 1):
-                    ir_list_DF_money_market[i][j] =self._ir_list[i][j+1]
+                    ir_list_DF_money_market[i][j] =self._ir_list[i][j]
                 ir_list_DF_money_market[i][index_DF] = temp_discount_factor[i]
-
             for i in range(len_MM, len_ir_list):
                 for j in range(len_one_list_with_DF - 1):
-                    ir_list_DF_money_market[i][j] = self._ir_list[i][j+1]
+                    ir_list_DF_money_market[i][j] = self._ir_list[i][j]
                 ir_list_DF_money_market[i][index_DF] = 0.0
 
         elif (TN_flag == False):
             # 0/N
             index_ON = extract_date_list.index('O/N')
-            temp_discount_factor[index_ON] = 1.0 / (1.0 + self._calc_day_count_fraction(self._ir_list[index_ON ][col_sd], self._ir_list[index_ON ][col_ed]) \
-                                                                             * float(self._ir_list[index_ON][col_rate ]))
+            temp_discount_factor[index_ON] = 1.0 / (1.0 + self._calc_day_count_fraction(self._ir_list[index_ON ][6], self._ir_list[index_ON ][7]) \
+                                                                             * float(self._ir_list[index_ON][3]))
             # libor
             for i in range(1, len_MM):
                 temp_discount_factor[i] = temp_discount_factor[index_ON] * temp_discount_factor[index_ON]  \
-                                                            / (1.0 + self._calc_day_count_fraction(self._ir_list[i][col_sd], self._ir_list[i][col_ed]) * float(self._ir_list[i][col_rate ]))
+                                                            / (1.0 + self._calc_day_count_fraction(self._ir_list[i][6], self._ir_list[i][7]) * float(self._ir_list[i][3]))
 
             for i in range(len_MM):
                 for j in range(len_one_list_with_DF - 1):
-                    ir_list_DF_money_market[i][j] =self._ir_list[i][j+1]
+                    ir_list_DF_money_market[i][j] =self._ir_list[i][j]
                 ir_list_DF_money_market[i][index_DF] = temp_discount_factor[i]
-
             for i in range(len_MM, len_ir_list):
                 for j in range(len_one_list_with_DF - 1):
-                    ir_list_DF_money_market[i][j] = self._ir_list[i][j+1]
+                    ir_list_DF_money_market[i][j] = self._ir_list[i][j]
                 ir_list_DF_money_market[i][index_DF] = 0.0
 
         return ir_list_DF_money_market
@@ -299,8 +279,8 @@ class discount_factor:
         return interpolated_ir_list_DF_mm
 
     def _interpolate_swap_rate(self):
-        extract_date_list = extract_1d_list(self._ir_list, self._column_tenor)
-        extract_rate_list = extract_1d_list(self._ir_list, self._column_rate)
+        extract_date_list = extract_1d_list(self._ir_list, 0)
+        extract_rate_list = extract_1d_list(self._ir_list, 3)
         index_1y = extract_date_list.index('1.0Y')
         extract_date_list_swap_tenor = extract_date_list[index_1y:]
         for i in range(len(extract_date_list_swap_tenor)):
@@ -349,16 +329,13 @@ class discount_factor:
         return annuity
 
     def _calc_DF_swap_rate(self):
-        col_sd = self._column_start_date
-        col_ed = self._column_end_date
         interpolated_ir_list = self._interpolated_ir_list_for_bootstrap()
         extract_date_list = extract_1d_list(interpolated_ir_list, 0)
         index_1y = extract_date_list.index('12.0M')
         index_roll_tenor = extract_date_list.index(self._str_roll_month)
         index_start_tenor = index_1y + 1
         index_end_tenor = len(interpolated_ir_list)
-        ### need to change day_count_fraction
-        day_count_fraction = self._calc_day_count_fraction(self._ir_list[index_roll_tenor][col_sd],  self._ir_list[index_roll_tenor][col_ed])
+        day_count_fraction = self._calc_day_count_fraction(self._ir_list[index_roll_tenor][6],  self._ir_list[index_roll_tenor][7])
         DF_swap_rate = np.zeros(len(interpolated_ir_list))
         for i in range(index_start_tenor, index_end_tenor):
             annuity = self._calc_annuity(interpolated_ir_list, interpolated_ir_list[i][0])
@@ -410,7 +387,10 @@ class discount_factor:
         interpolated_DF_list[0][1] = self._calc_end_date_input_days(interpolated_DF_list[0][0])
         interpolated_DF_list[0][2] = 1.0
         extract_end_date_list = extract_1d_list(interpolated_DF_list, 1)
-        index_target_date = extract_end_date_list.index(date)
+        # change format input date to 'yyyymmdd'(8 digit)
+        date_time_obj = datetime.datetime.strptime(date, '%Y/%m/%d')
+        date_processed = date_time_obj.strftime('%Y/%m/%d')
+        index_target_date = extract_end_date_list.index(date_processed)
         return interpolated_DF_list[index_target_date][2]
 
     def get_DF_list(self):
