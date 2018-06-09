@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 
 
-# In[ ]:
+# In[11]:
 
 
 import subprocess
@@ -62,4 +62,26 @@ for i in range(0, len_item):
 
 
 pd.DataFrame(dict_saccr).head()
+
+
+# ## in case of using CSV reader
+
+# In[12]:
+
+
+import csv
+
+
+# In[87]:
+
+
+with open('SACCR_output.csv', 'r') as csvfile:
+    obj_reader = csv.reader(csvfile)
+    data = [i for i in obj_reader]
+
+
+# In[63]:
+
+
+data
 
