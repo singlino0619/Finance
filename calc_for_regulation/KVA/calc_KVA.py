@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 import pandas as pd
@@ -9,21 +9,21 @@ import numpy as np
 import datetime
 
 
-# In[5]:
+# In[2]:
 
 
 import subprocess
 subprocess.run(['jupyter', 'nbconvert', '--to', 'python', 'calc_KVA.ipynb'])
 
 
-# In[6]:
+# In[8]:
 
 
 df_ead_profile = pd.read_csv('SACCR_EAD_profile.csv')
 df_ead_profile
 
 
-# In[14]:
+# In[9]:
 
 
 array_data_grid = df_ead_profile.columns.values.tolist()
@@ -31,7 +31,7 @@ del array_data_grid[0]
 array_data_grid
 
 
-# In[7]:
+# In[10]:
 
 
 array_ead = df_ead_profile.iloc[0].values.tolist()
@@ -39,8 +39,12 @@ del array_ead[0]
 array_ead
 
 
-# In[19]:
+# In[22]:
 
+
+def trapezoidal_rule(array_func_i, array_func_ip1):
+    function = (array_func_i + array_func_ip1)/2
+    return function
 
 def calc_KVA(capital_cost, risk_weight, alpha, array_EAD_profile, array_grid, netting_effect):
     int_num = len(array_grid)
@@ -53,7 +57,7 @@ def calc_KVA(capital_cost, risk_weight, alpha, array_EAD_profile, array_grid, ne
         remaining_maturity = ((datetime_obj_maturity - datetime_obj_date_i).days) /365
         DF = (1.0 - np.exp(-0.05*remaining_maturity)/(0.05*remaining_maturity))
         delta_t = ((datetime_obj_date_i_p1 - datetime_obj_date_i).days) /365
-        KVA = KVA + capital_cost / alpha * risk_weight * float((array_ead[i] + array_ead[i+1])/2) * DF * delta_t
+        KVA = KVA + capital_cost / alpha * risk_weight * DF * delta_t * trapezoidal_rule(array_ead[i], array_ead[i+1])
     if(netting_effect==True):
         KVA = KVA * 0.5
     else:
@@ -61,7 +65,7 @@ def calc_KVA(capital_cost, risk_weight, alpha, array_EAD_profile, array_grid, ne
     return KVA
 
 
-# In[21]:
+# In[23]:
 
 
 calc_KVA(0.6, 0.02, 1.4, array_ead, array_data_grid, False)
