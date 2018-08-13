@@ -1,4 +1,4 @@
-Date,Money_market,Tenor,Currency,Rate,lag(day),Freqency(month),Dcc
+Date,Money_market,Tenor,Currency,Rate,lag(day),Frequency(month),Dcc
 2018/7/31,LIBOR,O/N,USD,0.0191538,2,,ACT/360
 2018/7/31,LIBOR,1W,USD,0.0195363,2,,ACT/360
 2018/7/31,LIBOR,1M,USD,0.0208138,2,,ACT/360
